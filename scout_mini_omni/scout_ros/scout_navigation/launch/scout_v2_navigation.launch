@@ -1,0 +1,16 @@
+<!-- -->
+<launch>
+    <arg name="map_file"/>
+ <!--   <arg name="use_sim_time"/>
+    <param name="/use_sim_time" type="bool" value="$(arg use_sim_time)"/>
+-->    
+
+  <!--  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" output="screen"> 
+       <param name="frame_id" value="map"/>
+    </node> -->
+
+    <!-- Run Map Server -->
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find scout_navigation)/maps/opl22_3.yaml"/>
+
+    <include file="$(find scout_navigation)/launch/configs/navigation.launch" />
+</launch>

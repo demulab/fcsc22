@@ -1,0 +1,14 @@
+<launch>
+    <!-- scout mini base -->
+    <!--    <include file="$(find scout_base)/launch/scout_mini_omni_base.launch"/> -->
+
+    <!-- 2dlidar-->
+<!--    <include file="$(find scout_base)/launch/include/dual_2dlidar.launch"/> -->
+
+    <!-- rviz -->
+   <!-- <include file="$(find scout_base)/launch/display_mini_models.launch"/> -->
+
+    <!-- navigation -->
+    <include file="$(find scout_navigation)/launch/scout_v2_navigation.launch"/>
+</launch>
+

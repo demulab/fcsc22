@@ -1,0 +1,11 @@
+<launch>
+  <!-- vision -->
+  <include file="$(find robot)/launch/vision.launch"/>
+  <!-- arm -->
+  <include file="$(find robot)/launch/arm.launch"/>
+  <!-- navigation -->
+  <include file="$(find robot)/launch/base.launch"/>
+  <include file="$(find robot)/launch/navigation.launch"/>
+  <!-- rviz -->
+  <include file="$(find robot)/launch/rviz.launch"/>
+</launch>

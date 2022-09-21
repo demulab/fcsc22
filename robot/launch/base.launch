@@ -1,0 +1,8 @@
+<launch>
+    <!-- scout mini base -->
+    <include file="$(find scout_base)/launch/scout_mini_omni_base.launch"/>
+
+    <!-- 2dlidar-->
+    <include file="$(find scout_base)/launch/include/dual_2dlidar.launch"/>
+</launch>
+
