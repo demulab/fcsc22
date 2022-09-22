@@ -10,11 +10,15 @@ from std_msgs.msg import String
 import smach
 import smach_ros
 
-sys.path.append('/home/demulab/opl_ws/src/OPL22/robot/script')
+sys.path.append('/home/demulab/opl_ws/src/fcsc22/robot/script')
 from module import *
 
 def main():
  #   arm = Arm()
+    ShelfCommand("low_open")
+    rospy.sleep(4.0)
+    ShelfCommand("low_close")
+"""
     move = Move()
     rospy.sleep(2.0)
     move.y_move(1.4)
@@ -24,7 +28,8 @@ def main():
     move.x_move(1.25)
     rospy.sleep(2.0)
     move.y_move(-1.4)
-    """
+"""
+"""
     rate = rospy.Rate(5)
     gripper.close()
     gripper.open()

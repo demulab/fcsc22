@@ -12,14 +12,7 @@
     <arg name="align_depth" value="true"/>
   </include>
   
-  <include file="$(find detectron2_ros)/launch/mylaunch.launch">
-  </include>
   
-  <!-- bounding to position -->
-  <node pkg="detectron2_ros" name="BB_tf" type="tf_debug.py" />
-  
-  <!-- manipulation setting-->
-  <node pkg="robot" name="manipulation" type="manipulation.py" />
 
   <!-- execute -->
   </launch> 

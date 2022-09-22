@@ -32,9 +32,9 @@ class mikiwame(object):
     def shelf_mid(self):
         #self.gripper.close()
 	print("Start setting")
-        self.mid_trans = [0.4, -0.1, 0.65]
+        self.mid_trans = [0.46, 0.06, 0.53]
         self.mid_pose = geometry_msgs.msg.Pose()
-        self.q = tf.transformations.quaternion_from_euler(0, (math.pi / 3)*0.6 , math.pi)
+        self.q = tf.transformations.quaternion_from_euler(0, (math.pi / 3)*0.3 , math.pi)
         self.mid_pose.position.x = self.mid_trans[0]
         self.mid_pose.position.y = self.mid_trans[1]
         self.mid_pose.position.z = self.mid_trans[2]
@@ -54,8 +54,9 @@ class mikiwame(object):
         self.target_pose_1 = geometry_msgs.msg.Pose()
         self.target_pose_1 = self.vision.target_object.pose.pose
         self.q = tf.transformations.quaternion_from_euler(0, (math.pi / 3)*0.8, math.pi)
+        
         self.target_pose_1.position.x = self.vision.target_object.pose.pose.position.x - 0.22
-        self.target_pose_1.position.z = self.vision.target_object.pose.pose.position.z + 0.15
+        self.target_pose_1.position.z = self.vision.target_object.pose.pose.position.z + 0.2#0.15
         self.target_pose_1.orientation.x = self.q[0]
         self.target_pose_1.orientation.y = self.q[1]
         self.target_pose_1.orientation.z = self.q[2]
@@ -78,7 +79,7 @@ class mikiwame(object):
         self.gripper.close()
     ############### bring to box ######################3
     def bring_to_box(self):
-        self.box_trans = [[0.2, -0.0, 0.6]]#, [0.2, 0.0, 0.5], []]
+        self.box_trans = [[0.46, 0.06, 0.53], [0.3, 0.0, 0.5]]
         for way in self.box_trans:
             self.box_pose = geometry_msgs.msg.Pose()
             self.q = tf.transformations.quaternion_from_euler(0, math.pi / 3 , math.pi)
