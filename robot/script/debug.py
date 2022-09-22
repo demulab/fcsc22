@@ -15,7 +15,9 @@ from module import *
 
 def main():
  #   arm = Arm()
-    ShelfCommand("high_open")
+    ShelfCommand("low_open")
+    rospy.sleep(4.0)
+    ShelfCommand("low_close")
 """
     move = Move()
     rospy.sleep(2.0)
