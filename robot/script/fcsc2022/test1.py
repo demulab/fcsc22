@@ -31,6 +31,7 @@ def get_id():
 def move_shelf():
     rospy.sleep(2.0)
     self.move.y_move(1.4)
+    B
     rospy.sleep(1.0)
     self.move.x_move(-1.25)
     rospy.sleep(2.0)
@@ -42,14 +43,64 @@ def move_goal():
     self.move.y_move(-1.4)
     rospy.sleep(2.0)
 
+class ARPick(smach.State):
+    def __init__(self):
+        smach.State.__init__(self,outcomes=['success'])
+
+    def execute(self,userdata):
+        return 'success'
+
+class Pick(smach.State):
+    def __init__(self):
+        smach.State.__init__(self,outcomes=['success'])
+
+    def execute(sefl,userdata):
+
+        return 'success'
+
+class LowShelf(smach.State):
+    def __init__(self):
+        smach.State.__init__(self,outcomes=['success'])
+
+    def execute(self,userdata):
+        return 'success'
+
+class MiddleShelf(smach.State):
+    def __init__(self):
+        smach.State.__init__(self,outcomes=['success'])
+
+    def execute(self,userdata):
+        return 'success'
+
+
 def main():
-    arm = Arm()
-    gripper = Gripper()
-    vision = Vision()
-    waste_id = get_id()
-    sm_top = smach.StateMachine(outcomes = ['FINISH'])
+    #arm = Arm()
+    #gripper = Gripper()
+    #vision = Vision()
+   # waste_id = get_id()
+   # move_shelf()
+    sm_low = smach.StateMachine(outcomes=['to_middle_shelf'])
+    with sm_low:
+        smach.StateMachine.add('LOWSHELF',LowShelf(),transitions={'success':'PICK_coffee'})
+        smach.StateMachine.add('PICK_coffee',ARPick(),transitions={'success':'to_middle_shelf'})            
+    sm_middle = smach.StateMachine(outcomes=['to_exit'])
+    with sm_middle:
+        smach.StateMachine.add('MIDDLESHLF',MiddleShelf(),transitions={'success':'PICK_egg_sand'})
+        smach.StateMachine.add('PICK_egg_sand',Pick(),transitions={'success':'PICK_lettuce_sand'})
+        smach.StateMachine.add('PICK_lettuce_sand',Pick(),transitions={'success':'to_exit'})
+    #move_goal()
+    sm_top =smach.StateMachine(outcomes=['success'])
     with sm_top:
-        sm
+        smach.StateMachine.add('LOW',sm_low,transitions={'to_middle_shelf':'MIDDLE'})
+        smach.StateMachine.add('MIDDLE',sm_middle,transitions={'to_exit':'success'})
+    
+    outcomes = sm_top.execute()
+
+"""
+    sm_top = StateMachine(outcomes=['to_exit']
+        with sm_top:
+            smach.StateMachine.add('
+"""
 
 if __name__ == '__main__':
     try:
