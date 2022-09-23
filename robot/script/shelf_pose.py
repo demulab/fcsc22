@@ -6,7 +6,7 @@ import smach
 import smach_ros
 import sys
 import tf
-sys.path.append('/home/demulab/opl_ws/src/OPL22/robot/script')
+sys.path.append('/home/demulab/opl_ws/src/fcsc22/robot/script')
 from module import *
 import rosparam
 import os
