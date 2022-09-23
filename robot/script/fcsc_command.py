@@ -18,7 +18,13 @@ from scout_navigation.srv import NaviLocation, NaviLocationResponse
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist
 
+
+
+
+
 class XArm_command(object):
+
+
 
     def __init__(self):
 	print("Constructor")
@@ -32,11 +38,15 @@ class XArm_command(object):
 
 
 	print("End")
-    ########## set manipulator ##########    
+
+
+
+########## set manipulator ##########    
+    
     def shelf_mid(self):
         #self.gripper.close()
 	print("Start setting")
-        self.mid_trans = [0.46, 0.06, 0.53]
+        self.mid_trans = [0.39, 0.06, 0.53]
         self.mid_pose = geometry_msgs.msg.Pose()
         self.q = tf.transformations.quaternion_from_euler(0, (math.pi / 3)*0.3 , math.pi)
         self.mid_pose.position.x = self.mid_trans[0]
@@ -49,6 +59,27 @@ class XArm_command(object):
         self.arm.move(self.mid_pose)
         self.gripper.open()
 	print("End setting")
+
+
+
+    def setting_pose(self, trans):
+        print("start setting")
+        tr = trans
+        self.pose = geometry_msgs.msg.Pose()
+         #self.q = tf.transformations.quaternion_from_euler(0, (math.pi / 3)*0.3 , math.pi)
+
+        self.q = tf.transformations.quaternion_from_euler(0, (math.pi/ 3)*0.4, math.pi)
+        self.pose.position.x = tr[0]
+        self.pose.position.y = tr[1]
+        self.pose.position.z = tr[2]
+        self.pose.orientation.x = self.q[0]
+        self.pose.orientation.y = self.q[1]
+        self.pose.orientation.z = self.q[2]
+        self.pose.orientation.w = self.q[3]
+        print(self.pose)
+        self.arm.move(self.pose)
+
+
 
     ########### grasp object ##############
     def grasp(self):
@@ -81,7 +112,10 @@ class XArm_command(object):
         self.target_pose_2.orientation.w = self.q[3]
         self.arm.move(self.target_pose_2)
         self.gripper.close()
-    ############### bring to box ######################3
+
+
+
+############### bring to box ######################3
     def bring_to_box(self):
         self.box_trans = [[0.46, 0.06, 0.53], [0.3, 0.0, 0.5]]
         for way in self.box_trans:
@@ -96,6 +130,8 @@ class XArm_command(object):
             self.box_pose.orientation.w = self.q[3]
             self.arm.move(self.box_pose)
         self.gripper.open()
+
+
 
     def ar_picking(self):
         ####### kakudo hosii ##########
@@ -119,7 +155,21 @@ class XArm_command(object):
         print(self.target_pose)
 
         self.arm.move(self.target_pose)
+        self.gripper.close()
 
+
+    def look_shelf(self, step, side):
+        if step == "low":
+            if side =="left":
+                self.setting_pose([0.30, 0.20, 0.59])
+            if side == "right":
+                self.setting_pose([0.30, -0.20, 0.59])
+        elif step == "middle":
+            if side =="left":
+                 self.setting_pose([0.30, 0.20, 0.59])
+            if side == "right":
+                 self.setting_pose([0.30, -0.20, 0.59])
+        #elif step == "high":
 
 
 
@@ -134,9 +184,11 @@ if __name__ == "__main__":
     
     try:
 	#rospy.init_node('basic_function', anonymous=True)
-        robot.shelf_mid()
+        #robot.shelf_mid()
+        #robot.ar_picking()
+        robot.look_shelf("low", "right")
         robot.ar_picking()
-        
+        robot.look_shelf("low", "right")
         #rospy.sleep(15)
         #robot.grasp()
         #robot.bring_to_box()
