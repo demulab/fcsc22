@@ -6,7 +6,7 @@ import smach
 import smach_ros
 import sys
 import tf
-sys.path.append('/home/demulab/opl_ws/src/OPL22/robot/script')
+sys.path.append('/home/demulab/opl_ws/src/fcsc22/robot/script')
 from module import *
 import rosparam
 import os
@@ -23,9 +23,6 @@ from geometry_msgs.msg import Twist
 
 
 class XArm_command(object):
-
-
-
     def __init__(self):
 	print("Constructor")
         self.arm = Arm()
@@ -33,10 +30,7 @@ class XArm_command(object):
         self.vision = Vision()
         self.arm.add_table()
         self.gripper.open()
-        
         self.listener = tf.TransformListener()
-
-
 	print("End")
 
 
@@ -133,10 +127,15 @@ class XArm_command(object):
 
 
 
-    def ar_picking(self):
+    def ar_picking(self, id_num):
         ####### kakudo hosii ##########
+        debug = False
+        tf_diff = 0.0
+        if debug == True:
+            tf_diff = -0.1
 
-        self.ar_name = "ar_marker_61"
+        ID = id_num
+        self.ar_name = "ar_marker_" + str(ID)
         self.listener.waitForTransform("/camera_link", self.ar_name, rospy.Time(), rospy.Duration(10.0))
         (trans,rot) = self.listener.lookupTransform('/world', '/%s' % (self.ar_name), rospy.Time(0))
         self.target_pose = geometry_msgs.msg.Pose()
@@ -145,9 +144,9 @@ class XArm_command(object):
         #self.target_pose = self.vision.target_object.pose.pose
         self.q = tf.transformations.quaternion_from_euler(0, (math.pi / 3)*0.8, math.pi)
  
-        self.target_pose.position.x = trans[0] 
+        self.target_pose.position.x = trans[0] - 0 + tf_diff
         self.target_pose.position.y = trans[1]
-        self.target_pose.position.z = trans[2] #+ 0.2#0.15
+        self.target_pose.position.z = trans[2] + 0.1#0.15
         self.target_pose.orientation.x = self.q[0]#rot[0]
         self.target_pose.orientation.y = self.q[1]#rot[1]
         self.target_pose.orientation.z = self.q[2]#rot[2]
@@ -161,9 +160,9 @@ class XArm_command(object):
     def look_shelf(self, step, side):
         if step == "low":
             if side =="left":
-                self.setting_pose([0.30, 0.20, 0.59])
+                self.setting_pose([0.30, 0.17, 0.48])
             if side == "right":
-                self.setting_pose([0.30, -0.20, 0.59])
+                self.setting_pose([0.30, -0.17, 0.48])
         elif step == "middle":
             if side =="left":
                  self.setting_pose([0.30, 0.20, 0.59])

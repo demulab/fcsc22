@@ -13,6 +13,8 @@ from Moveit_mikiwame import *
 import rosparam 
 import os
 
+
+
 # global value
 object_id = {"a":1,"b":2,"c":3,"d":4,"e":5,
              "f":6,"g":7,"h":8,"i":9,"j":10,
@@ -41,6 +43,8 @@ onigiri_tuna_waste = 0
 unnone_waste = 0
 #wasted_id = [
 move = Move()
+
+
 
 def get_id():
     #Specify the object to be discarded as a string
@@ -89,14 +93,18 @@ def get_id():
     return coffee_waste
             
 
+
 def move_shelf():
+    move = Move()
     rospy.sleep(2.0)
     move.y_move(1.25)
     rospy.sleep(1.0)
     move.x_move(-1.20)
     rospy.sleep(2.0)
 
+
 def move_goal():
+    move = Move()
     rospy.sleep(2.0)
     self.move.x_move(-1.20)
     rospy.sleep(1.0)
@@ -104,33 +112,36 @@ def move_goal():
     rospy.sleep(2.0)
 
 
+
 class LowShelf(smach.State):
     def __init__(self):
         smach.State.__init__(self,outcomes=['success'])
+        self.command = XArm_command()
+        self.spawner = Spawner()
+
 
     def execute(self,userdata):
+        move_shelf()
         print(coffee_waste)
-       # id_data = get_id()
-        
+        id_data = get_id()
         print(id_data)
-        command = XArm_command()
-        spawner = Spawner()
-        command.look_shelf("low","left")
+        self.debug_id = 61
+        self.command.look_shelf("low","left")
         rospy.sleep(3.0)
-        
-        spawner.remove_world()
-        spawner.mikiwame_base()
-        spawner.spawn_shelf_low()
+
+        self.spawner.remove_world()
+        self.spawner.mikiwame_base()
+        self.spawner.spawn_shelf_low()
         ShelfCommand("low_open")
+
         rospy.sleep(4.0)
-        command.ar_picking(1)
-        command.look_shelf("low","left")
-
+        self.command.ar_picking(self.debug_id)
+        self.command.look_shelf("low","left")
         #to contena
-        
         #x_command.look_shlef(low,right)
-
         return 'success'
+
+
 
 class MiddleShelf(smach.State):
     def __init__(self):
@@ -145,9 +156,9 @@ def main():
     #gripper = Gripper()
     #vision = Vision()
     #spawner = Spawner()
-    get_id()
+    #get_id()
     #move_shelf()
-    command = XArm_command()
+    #command = XArm_command()
 
     sm_low = smach.StateMachine(outcomes=['to_middle_shelf'])
     with sm_low:
@@ -169,6 +180,8 @@ def main():
         with sm_top:
             smach.StateMachine.add('
 """
+
+
 
 if __name__ == '__main__':
     try:
