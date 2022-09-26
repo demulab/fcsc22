@@ -285,38 +285,40 @@ class Move():
                     clear = 0
         else:
             return False
-
+####################################################################################################################
+##################################################### FCSC 2022 ####################################################
+####################################################################################################################
 def ShelfCommand(shelf_command):
     print("start")
     if shelf_command == "high_open":
         print("open")
         for i in range(0,2):
-            res = subprocess.call(["python","/home/demulab/opl_ws/src/fcsc22/irMagician_wrs2021/irmcli/irmcli.py","-p","-f","/home/demulab/opl_ws/src/fcsc22/irMagician_wrs2021/json/open_high_shelf.json"])
+            res = subprocess.call(["python","/home/demulab/opl_ws/src/fcsc22/robot/script/irmcli/irmcli.py","-p","-f","/home/demulab/opl_ws/src/fcsc22/robot/json/open_high_shelf.json"])
         if res == 0:
             print("high_open")
     elif shelf_command == "high_close":
         for i in range(0,2):
-            res = subprocess.call(["python","/home/demulab/opl_ws/src/fcsc22/irMagician_wrs2021/irmcli/irmcli.py","-p","-f","/home/demulab/opl_ws/src/fcsc22/irMagician_wrs2021/json/close_high_shelf.json"])
+            res = subprocess.call(["python","/home/demulab/opl_ws/src/fcsc22/robot/script/irmcli.py","-p","-f","/home/demulab/opl_ws/src/fcsc22/robot/json/close_high_shelf.json"])
         if res == 0:
             print("high_close")
     elif shelf_command == "middle_opne":
         for i in range(0,2):
-            res = subprocess.call(["python","/home/demulab/opl_ws/src/fcsc22/irMagician_wrs2021/irmcli/irmcli.py","-p","-f","/home/demulab/catkin_ws/src/fcsc22/irMagician_wrs2021/json/opne_middle_shelf.json"])
+            res = subprocess.call(["python","/home/demulab/opl_ws/src/fcsc22/robot/script/irmcli.py","-p","-f","/home/demulab/catkin_ws/src/fcsc22/robot/json/opne_middle_shelf.json"])
         if res == 0:
             print("middle_opne")
     elif shelf_command == "middle_close":
         for i in range(0,2):
-            res = subprocess.call(["python","/home/demulab/opl_ws/src/fcsc22/irMagician_wrs2021/irmcli/irmcli.py","-p","-f","/home/demulab/opl_ws/src/fcsc22/irMagician_wrs2021/json/close_middle_shelf.json"])
+            res = subprocess.call(["python","/home/demulab/opl_ws/src/fcsc22/robot/script/irmcli.py","-p","-f","/home/demulab/opl_ws/src/fcsc22/robot/json/close_middle_shelf.json"])
         if res == 0:
             print("middle_middle")
     elif shelf_command == "low_open":
         for i in range(0,2):
-            res = subprocess.call(["python","/home/demulab/opl_ws/src/fcsc22/irMagician_wrs2021/irmcli/irmcli.py","-p","-f","/home/demulab/opl_ws/src/fcsc22/irMagician_wrs2021/json/open_low_shelf.json"])
+            res = subprocess.call(["python","/home/demulab/opl_ws/src/fcsc22/robot/script/irmcli.py","-p","-f","/home/demulab/opl_ws/src/fcsc22/robot/json/open_low_shelf.json"])
         if res == 0:
             print("low_open")
     elif shelf_command == "low_close":
         for i in range(0,2):
-            res = subprocess.call(["python","/home/demulab/opl_ws/src/fcsc22/irMagician_wrs2021/irmcli/irmcli.py","-p","-f","/home/demulab/opl_ws/src/fcsc22/irMagician_wrs2021/json/close_low_shelf.json"])
+            res = subprocess.call(["python","/home/demulab/opl_ws/src/fcsc22/robot/script/irmcli.py","-p","-f","/home/demulab/opl_ws/src/fcsc22/robot/json/close_low_shelf.json"])
         if res == 0:
             print("low_close")
         print("irmagician_acitive activate")
