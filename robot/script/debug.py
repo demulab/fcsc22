@@ -16,10 +16,10 @@ from fcsc_command import *
 
 
 def main():
- #   arm = Arm()
-   # ShelfCommand("low_close")
-    command = XArm_command()
-    command.ar_picking(61)
+    grip = Gripper()
+    grip.vacuum_on()
+    rospy.sleep(3.0)
+    grip.vacuum_off()
 """
 move = Move()
     rospy.sleep(2.0)
