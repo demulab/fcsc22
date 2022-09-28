@@ -1,11 +1,14 @@
 #!/usr/bin/env python
-# cooding: utf-8
+# -*- coding: utf-8 -*-
+
 
 import rospy
 import smach
 import smach_ros
 import sys
 import tf
+import math
+import numpy as np
 sys.path.append('/home/demulab/opl_ws/src/fcsc22/robot/script')
 from module import *
 import rosparam
@@ -17,7 +20,8 @@ sys.path.append('/home/demulab/scout_ws/src/scout_ros/scout_navigation/srv')
 from scout_navigation.srv import NaviLocation, NaviLocationResponse
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist
-
+########## AR msg ##########
+from ar_track_alvar_msgs.msg import AlvarMarkers
 
 
 
@@ -32,11 +36,10 @@ class XArm_command(object):
         self.gripper.open()
         self.listener = tf.TransformListener()
 	print("End")
+        rospy.Subscriber("ar_pose_marker", AlvarMarkers, self.ar_cb)
 
 
-
-########## set manipulator ##########    
-    
+########## set manipulator ##########        
     def shelf_mid(self):
         #self.gripper.close()
 	print("Start setting")
@@ -108,13 +111,16 @@ class XArm_command(object):
         self.gripper.close()
 
 
-
 ############### bring to box ######################3
     def bring_to_box(self):
-        self.box_trans = [[0.46, 0.06, 0.53], [0.3, 0.0, 0.5]]
-        for way in self.box_trans:
+        add_height = 0.0
+
+        self.box_trans =  [[0.30, 0.0, 0.40 + add_height], [0.30, 0.10, 0.40 + add_height], [0.2, 0.20, 0.40 + add_height], [0.1, 0.3, 0.40]]
+        self.num = len(self.box_trans)
+    
+        for index, way in enumerate(self.box_trans):
             self.box_pose = geometry_msgs.msg.Pose()
-            self.q = tf.transformations.quaternion_from_euler(0, math.pi / 3 , math.pi)
+            self.q = tf.transformations.quaternion_from_euler(0, math.pi / 3 , math.pi/self.num[index])
             self.box_pose.position.x = way[0]
             self.box_pose.position.y = way[1]
             self.box_pose.position.z = way[2]
@@ -125,10 +131,13 @@ class XArm_command(object):
             self.arm.move(self.box_pose)
         self.gripper.open()
 
-
-
+    
     def ar_picking(self, id_num):
-        ####### kakudo hosii ##########
+        """
+        @brief　(旧)ARのピッキング
+
+        """
+        
         debug = False
         tf_diff = 0.0
         if debug == True:
@@ -140,7 +149,6 @@ class XArm_command(object):
         (trans,rot) = self.listener.lookupTransform('/world', '/%s' % (self.ar_name), rospy.Time(0))
         self.target_pose = geometry_msgs.msg.Pose()
         
-
         #self.target_pose = self.vision.target_object.pose.pose
         self.q = tf.transformations.quaternion_from_euler(0, (math.pi / 3)*0.8, math.pi)
  
@@ -171,10 +179,94 @@ class XArm_command(object):
         #elif step == "high":
 
 
+    def calc_z_axis_direction(self, roll, pitch, yaw):
+    
+        init_z = np.array([[0, 0, 1]]).T
+    
+        rot_x = np.array([[1,      0,             0      ],
+                          [0, np.cos(roll), -np.sin(roll)],
+                          [0, np.sin(roll),   np.cos(roll)]])
+                      
+        rot_y = np.array([[ np.cos(pitch), 0, np.sin(pitch)],
+                          [      0,        1,      0       ],
+                          [-np.sin(pitch), 0, np.cos(pitch)]])
+                      
+        rot_z = np.array([[np.cos(yaw), -np.sin(yaw), 0],
+                          [np.sin(yaw),  np.cos(yaw), 0],
+                          [     0,            0,      1]])
+                      
+        rot_mat = np.dot(rot_z, np.dot(rot_y, rot_x))
+        trans_z = np.dot(rot_mat, init_z)
+        return trans_z
 
 
+    def ar_cb(self, msg):
+        """
+        @brief　確認用のコード兼インスタンス変数へのデータ格納
+
+        """
+        """ 
+        for i in msg.markers:
+            print(i.id)
+            print(i.pose)
+            print(i.pose.pose.orientation.x)
+       """ 
+
+        self.ar_info = msg.markers
 
 
+    def vacuum_picking(self, ar_id):
+        """
+        @brief　バキュームによるARのピッキング（垂直侵入）
+ 
+        """
+        subject = ar_id
+        self.ar_name = "ar_marker_" + str(subject)
+
+        self.listener.waitForTransform("/camera_link", self.ar_name, rospy.Time(), rospy.Duration(10.0))
+        (trans,rot) = self.listener.lookupTransform('/world', '/%s' % (self.ar_name), rospy.Time(0))
+        
+        """
+        （（（（やりたい全体の流れ））））
+
+        ARマーカのリストの目当てのidを持つデータを抽出
+        　　　　　　　　　　　↓
+        つかみやすい姿勢を持つマーカを選定(?)
+        　　　　　　　　　　　↓
+                            把持
+        """
+       #idの一致するデータの探索 
+        for d in self.ar_info:
+            if d.id == subject:
+                sub_trans  = d.pose.pose 
+                
+        ox = sub_trans.orientation[0]
+        oy = sub_trans.orientation[1]
+        oz = sub_trans.orientation[2]
+        ow = sub_trans.orientation[3]
+        
+        eular = tf.transformations.euler_from_quaternion(ox, oy, oz, ow)
+
+        vec_z = self.calc_z_axis_direction(eular[0], eular[1], eular[2])
+        print(eular)
+        print(vec_z)
+        
+        """
+        self.target_pose = geometry_msgs.msg.Pose()
+        #self.q = tf.transformations.quaternion_from_euler(0, (math.pi / 3)*0.8, math.pi)
+        self.q = eular
+        self.target_pose.position.x = trans[0] - 0 + tf_diff
+        self.target_pose.position.y = trans[1]
+        self.target_pose.position.z = trans[2] + 0.1#0.15
+        self.target_pose.orientation.x = self.q[0]#rot[0]
+        self.target_pose.orientation.y = self.q[1]#rot[1]
+        self.target_pose.orientation.z = self.q[2]#rot[2]
+        self.target_pose.orientation.w = self.q[3]#rot[3]
+        print(self.target_pose)
+ 
+        self.arm.move(self.target_pose)
+        self.gripper.close()
+        """
 
 
 if __name__ == "__main__":
@@ -182,17 +274,17 @@ if __name__ == "__main__":
     robot = XArm_command()
     
     try:
-	#rospy.init_node('basic_function', anonymous=True)
-        #robot.shelf_mid()
+        """
+        #robot.look_shelf("low", "right")
         #robot.ar_picking()
-        robot.look_shelf("low", "right")
-        robot.ar_picking()
         robot.look_shelf("low", "right")
         #rospy.sleep(15)
         #robot.grasp()
-        #robot.bring_to_box()
-
-
+        robot.bring_to_box()
+        """
+        
+        robot.vacuum_picking(0)
+        rospy.spin()
     except rospy.ROSInterruptException:
         pass
 
