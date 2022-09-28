@@ -33,7 +33,8 @@ class XArm_command(object):
         self.gripper = Gripper()
         self.vision = Vision()
         self.arm.add_table()
-        self.gripper.open()
+        #self.gripper.open()
+        self.gripper.vacuum_off()
         self.listener = tf.TransformListener()
 	print("End")
         rospy.Subscriber("ar_pose_marker", AlvarMarkers, self.ar_cb)
@@ -130,7 +131,7 @@ class XArm_command(object):
             self.box_pose.orientation.z = self.q[2]
             self.box_pose.orientation.w = self.q[3]
             self.arm.move(self.box_pose)
-        self.gripper.open()
+        self.gripper.vacuum_off()
 
 
     
@@ -293,7 +294,7 @@ class XArm_command(object):
         print(self.target_pose)
 
         self.arm.move(self.target_pose)
-        self.gripper.close()
+        self.gripper.vacuum_on()
         
 
 

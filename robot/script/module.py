@@ -26,6 +26,7 @@ import os
 import sys
 from std_msgs.msg import String, Float64, Bool
 from std_srvs.srv import Empty
+from xarm_msgs.srv import SetInt16
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 sys.path.append('/home/demulab/opl_ws/src/fcsc22/scout_ros/scout_navigation/srv')
 from scout_navigation.srv import NaviLocation, NaviLocationResponse
@@ -72,6 +73,7 @@ class Gripper():
         self.speed = 1200
         rospy.Subscriber("/puressure", Float32MultiArray, self.puressure_cb)
         self.puressure_right = self.puressure_left = 0
+        self.gripper_vacuum =rospy.ServiceProxy('/xarm/vacuum_gripper_set',SetInt16)
 
     def set_speed(self, speed):
         self.speed = speed
@@ -103,6 +105,14 @@ class Gripper():
     def puressure_cb(self, msg):
         self.puressure_right = msg.data[0]
         self.puressure_left = msg.data[1] 
+
+    def vacuum_on(self):
+        rospy.wait_for_service('/xarm/vacuum_gripper_set')
+        self.gripper_vacuum(1)
+
+    def vacuum_off(self):
+        rospy.wait_for_service('/xarm/vacuum_gripper_set')
+        self.gripper_vacuum(0)
 
 class Vision():
     def __init__(self):

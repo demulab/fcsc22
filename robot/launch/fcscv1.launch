@@ -1,5 +1,5 @@
 <launch>
-    <include file="$(find robot)/launch/mikiwame.launch"/>
+    <include file="$(find robot)/launch/vacuum.launch"/>
     <include file="$(find robot)/launch/ar_mikiwame.launch"/>
     <include file="$(find scout_base)/launch/scout_mini_omni_base.launch"/>
 </launch>    
