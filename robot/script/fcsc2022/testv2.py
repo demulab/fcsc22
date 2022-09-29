@@ -125,7 +125,7 @@ class LowShelf(smach.State):
         id_data = get_id()
         move_shelf()
         print(id_data)
-        self.debug_id = 61
+        #self.debug_id = 61
         self.command.look_shelf("low","left")
         rospy.sleep(3.0)
 
@@ -135,7 +135,9 @@ class LowShelf(smach.State):
         ShelfCommand("low_open")
 
         rospy.sleep(4.0)
-        self.command.ar_picking(self.debug_id)
+        self.command.vacuum_picking(id_data)#ar_picking(self.debug_id)
+        self.command.bring_to_box()
+        
         self.command.look_shelf("low","left")
         #to contena
         #x_command.look_shlef(low,right)

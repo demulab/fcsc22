@@ -273,20 +273,29 @@ class XArm_command(object):
         self.q = rot
 
         # approach 1
-        self.target_pose.position.x = trans[0] + (up_point[0][0] * 2.5)
-        self.target_pose.position.y = trans[1] + (up_point[1][0] * 2.5)
-        self.target_pose.position.z = trans[2] + (up_point[2][0] * 2.5)
+        self.target_pose.position.x = trans[0] + (up_point[0][0] * 5.5)
+        self.target_pose.position.y = trans[1] + (up_point[1][0] * 5.5)
+        self.target_pose.position.z = trans[2] + (up_point[2][0] * 5.5)
         self.target_pose.orientation.x = self.q[0]#rot[0]
         self.target_pose.orientation.y = self.q[1]#rot[1]
         self.target_pose.orientation.z = self.q[2]#rot[2]
         self.target_pose.orientation.w = self.q[3]#rot[3]
         print(self.target_pose)
         self.arm.move(self.target_pose)
+        
+        rospy.sleep(1)
+        (trans,rot) = self.listener.lookupTransform('/world', '/%s' % (self.ar_name), rospy.Time(0))
+        # 垂直方向の計算
+        euler = tf.transformations.euler_from_quaternion(rot)
+        vec_z = self.calc_z_axis_direction(euler[0], euler[1], euler[2])
+        offset = 0.03
+        up_point = offset * vec_z
+        self.q = rot
 
         # approach 2
-        self.target_pose.position.x = trans[0] #+ up_point[0][0]
-        self.target_pose.position.y = trans[1] #+ up_point[1][0]
-        self.target_pose.position.z = trans[2] #+ up_point[2][0]
+        self.target_pose.position.x = trans[0] - (1.83 * up_point[0][0]) - 0.02#(1.89 * up_point[0][0]) - 0.02
+        self.target_pose.position.y = trans[1] - (1.83 * up_point[1][0]) - 0.04#(1.89 * up_point[1][0]) - 0.04
+        self.target_pose.position.z = trans[2] - (1.83 * up_point[2][0])
         self.target_pose.orientation.x = self.q[0]#rot[0]
         self.target_pose.orientation.y = self.q[1]#rot[1]
         self.target_pose.orientation.z = self.q[2]#rot[2]
@@ -295,6 +304,7 @@ class XArm_command(object):
 
         self.arm.move(self.target_pose)
         self.gripper.vacuum_on()
+        rospy.sleep(2.0)
         
 
 
@@ -304,15 +314,13 @@ if __name__ == "__main__":
     
     try:
         
-        #robot.look_shelf("low", "right")
-        #robot.ar_picking()
         robot.look_shelf("low", "right")
-        #rospy.sleep(15)
-        #robot.grasp()
-        #robot.bring_to_box()
-        robot.vacuum_picking(0)
+        robot.vacuum_picking(1)
         robot.bring_to_box()
-        robot .look_shelf("low", "right")
+        robot.look_shelf("low", "right")
+        #robot.gripper.vacuum_on()
+        #rospy.sleep(1)
+        #robot.gripper.vacuum_off()
         print("vacuum end")
         #rospy.spin()
     except rospy.ROSInterruptException:
