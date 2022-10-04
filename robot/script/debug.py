@@ -17,11 +17,12 @@ from fcsc_command import *
 
 def main():
  #   arm = Arm()
-   # ShelfCommand("low_close")
-    grip = Gripper()
-    grip.vacuum_on()
-    rospy.sleep(3.0)
-    grip.vacuum_off()
+    
+    ShelfCommand("low_open")
+    rospy.sleep(4)
+    ShelfCommand("low_close")
+
+
 """
 move = Move()
     rospy.sleep(2.0)

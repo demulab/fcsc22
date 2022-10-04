@@ -66,7 +66,7 @@ class XArm_command(object):
         self.pose = geometry_msgs.msg.Pose()
          #self.q = tf.transformations.quaternion_from_euler(0, (math.pi / 3)*0.3 , math.pi)
 
-        self.q = tf.transformations.quaternion_from_euler(0, (math.pi/ 3)*0.4, math.pi)
+        self.q = tf.transformations.quaternion_from_euler(0, (math.pi/ 3)*0.35, math.pi)
         self.pose.position.x = tr[0]
         self.pose.position.y = tr[1]
         self.pose.position.z = tr[2]
@@ -169,19 +169,28 @@ class XArm_command(object):
 
 
     def look_shelf(self, step, side):
-        print("############################################")
         if step == "low":
             if side =="left":
+                #self.setting_pose([0.30, 0, 0.48])
                 self.setting_pose([0.30, 0.17, 0.48])
             if side == "right":
+                #self.setting_pose([0.30, 0, 0.48])
                 self.setting_pose([0.30, -0.17, 0.48])
         elif step == "middle":
             if side =="left":
-                 self.setting_pose([0.30, 0.20, 0.59])
+                #self.setting_pose([0.30, 0, 0.59])
+                self.setting_pose([0.30, 0.17, 0.61])
             if side == "right":
-                 self.setting_pose([0.30, -0.20, 0.59])
-        #elif step == "high":
-
+                #self.setting_pose([0.30, 0, 0.59])
+                self.setting_pose([0.30, -0.17, 0.61])
+        elif step == "high":
+            if side == "left":
+                #self.setting_pose([0.30, 0, 0.70])
+                self.setting_pose([0.30, 0.15, 0.70])
+            if side == "right":
+                #self.setting_pose([0.30, 0, 0.70])
+                self.setting_pose([0.30, -0.15, 0.70])
+        
 
     def calc_z_axis_direction(self, roll, pitch, yaw):
     
@@ -228,18 +237,9 @@ class XArm_command(object):
         subject = ar_id
         self.ar_name = "ar_marker_" + str(subject)
 
-        """
-        （（（（やりたい全体の流れ））））
-
-        ARマーカのリストの目当てのidを持つデータを抽出
-        　　　　　　　　　　　↓
-        つかみやすい姿勢を持つマーカを選定(?)
-        　　　　　　　　　　　↓
-                            把持
-        """
         # tfの待機
         self.listener.waitForTransform("/camera_link", self.ar_name, rospy.Time(), rospy.Duration(10.0))
-
+        """
        #idの一致するデータの探索 
         for d in self.ar_info:
             if d.id == subject:
@@ -252,6 +252,7 @@ class XArm_command(object):
         
         eular = tf.transformations.euler_from_quaternion((ox, oy, oz, ow))
         """
+        """
         vec_z = self.calc_z_axis_direction(eular[0], eular[1], eular[2])
         #print(eular)
         #print(vec_z)
@@ -262,7 +263,7 @@ class XArm_command(object):
         print(up_point)
         """
         # tfを待つスリープ
-        rospy.sleep(10)
+        rospy.sleep(3)
         self.target_pose = geometry_msgs.msg.Pose()
         (trans,rot) = self.listener.lookupTransform('/world', '/%s' % (self.ar_name), rospy.Time(0))
         # 垂直方向の計算
@@ -273,9 +274,9 @@ class XArm_command(object):
         self.q = rot
 
         # approach 1
-        self.target_pose.position.x = trans[0] + (up_point[0][0] * 5.5)
-        self.target_pose.position.y = trans[1] + (up_point[1][0] * 5.5)
-        self.target_pose.position.z = trans[2] + (up_point[2][0] * 5.5)
+        self.target_pose.position.x = trans[0] + (up_point[0][0] * 5)
+        self.target_pose.position.y = trans[1] + (up_point[1][0] * 5) #- 0.02
+        self.target_pose.position.z = trans[2] + (up_point[2][0] * 5)
         self.target_pose.orientation.x = self.q[0]#rot[0]
         self.target_pose.orientation.y = self.q[1]#rot[1]
         self.target_pose.orientation.z = self.q[2]#rot[2]
@@ -293,9 +294,9 @@ class XArm_command(object):
         self.q = rot
 
         # approach 2
-        self.target_pose.position.x = trans[0] - (1.83 * up_point[0][0]) - 0.02#(1.89 * up_point[0][0]) - 0.02
-        self.target_pose.position.y = trans[1] - (1.83 * up_point[1][0]) - 0.04#(1.89 * up_point[1][0]) - 0.04
-        self.target_pose.position.z = trans[2] - (1.83 * up_point[2][0])
+        self.target_pose.position.x = trans[0] - (1.76 * up_point[0][0]) #- 0.01#(1.89 * up_point[0][0]) - 0.02
+        self.target_pose.position.y = trans[1] - (1.76 * up_point[1][0]) - 0.05#- 0.03#(1.89 * up_point[1][0]) - 0.04
+        self.target_pose.position.z = trans[2] - (1.76 * up_point[2][0])
         self.target_pose.orientation.x = self.q[0]#rot[0]
         self.target_pose.orientation.y = self.q[1]#rot[1]
         self.target_pose.orientation.z = self.q[2]#rot[2]
@@ -307,6 +308,65 @@ class XArm_command(object):
         rospy.sleep(2.0)
         
 
+        def waste_loop(self, waste_id):
+            """
+            @brief 廃棄タスクのループ
+
+            """
+            
+            high_list = range(1, 10)
+            middle_list = range(10, 19)
+            low_list = range(19, 28)
+            
+            for waste in waste_id:
+                self.setting_pose([0.30, 0, 0.59])
+                # high
+                if waste in high_list:
+                    self.look_shelf("high", "left")
+                    try:
+                        self.vacuum_picking(waste)
+                        self.bring_to_box()
+                        continue
+                        
+                    except TransformException:
+                        self.look_shelf("high", "right")
+                        try:
+                            self.vacuum_picking(waste)
+                            self.bring_to_box()
+                            continue
+                        except TransformException:
+                            continue
+                # middle
+                elif waste in middle_list:
+                    self.look_shelf("middle", "left")
+                    try:
+                        self.vacuum_picking(waste)
+                        self.bring_to_box()
+                        continue
+                    except TransformException:
+                        self.look_shelf("middle", "right")
+                        try:
+                            self.vacuum_picking(waste)
+                            self.bring_to_box()
+                            continue
+                        except TransformException:
+                            continue
+                # low
+                elif waste in low_list:
+                    self.look_shelf("low", "left")
+                    try:
+                        self.vacuum_picking(waste)
+                        self.bring_to_box()
+                        continue
+                    except TransformException:
+                        self.look_shelf("low", "right")
+                        try:
+                            self.vacuum_picking(waste)
+                            self.bring_to_box()
+                            continue
+                        except TransformException:
+                            continue
+                    
 
 if __name__ == "__main__":
     rospy.init_node('shelf', anonymous=True)

@@ -127,19 +127,106 @@ class LowShelf(smach.State):
         global waste_id
         id_data = get_id()
         print(waste_id[6])
-        
         rospy.sleep(2.0)
-        move_shelf()
-        self.debug_id = 19
+        #move_shelf()
+        self.debug_id = 1
         self.spawner.remove_world()
-        # coffee
-        if waste_id[6] == 19:
-            self.debug_id = 19
-        elif waste_id[6] == 20:
-            self.debug_id = 20
-        elif waste_id[6] == 21:
-            self.debug_id == 21
-        
+        high_list = range(1, 10)
+        middle_list = range(10, 19)
+        low_list = range(19, 28)
+        for waste in waste_id:
+            self.command.setting_pose([0.30, 0, 0.59])
+            # high
+            if waste in high_list:
+                self.command.look_shelf("high", "left")
+                try:
+                    self.spawner.remove_world()
+                    self.spawner.mikiwame_base()
+                    self.spawner.open_shelf("high")
+                    ShelfCommand("low_close")
+                    ShelfCommand("middle_close")
+                    ShelfCommand("high_open")
+                    rospy.sleep(3)
+                    self.command.vacuum_picking(waste)
+                    self.command.bring_to_box()
+                    continue
+                        
+                except tf.TransformException:
+                    self.command.look_shelf("high", "right")
+                    try:
+                        self.spawner.remove_world()
+                        self.spawner.mikiwame_base()
+                        self.spawner.open_shelf("high")
+                        ShelfCommand("low_close")
+                        ShelfCommand("middle_close")
+                        ShelfCommand("high_open")
+                        rospy.sleep(3)
+                        self.command.vacuum_picking(waste)
+                        self.command.bring_to_box()
+                        continue
+                    except tf.TransformException:
+                        continue
+            # middle
+            elif waste in middle_list:
+                self.command.look_shelf("middle", "left")
+                try:
+                    self.spawner.remove_world()
+                    self.spawner.mikiwame_base()
+                    self.spawner.open_shelf("middle")
+                    ShelfCommand("high_close")
+                    ShelfCommand("low_close")
+                    ShelfCommand("middle_open")
+                    rospy.sleep(3)
+                    self.command.vacuum_picking(waste)
+                    self.command.bring_to_box()
+                    continue
+                except tf.TransformException:
+                    self.command.look_shelf("middle", "right")
+                    try:
+                        self.spawner.remove_world()
+                        self.spawner.mikiwame_base()
+                        self.spawner.open_shelf("middle")
+                        ShelfCommand("high_close")
+                        ShelfCommand("low_close")
+                        ShelfCommand("middle_open")
+                        rospy.sleep(3)
+                        self.command.vacuum_picking(waste)
+                        self.command.bring_to_box()
+                        continue
+                    except tf.TransformException:
+                        continue
+            # low
+            elif waste in low_list:
+                self.command.look_shelf("low", "left")
+                try:
+                    self.spawner.remove_world()
+                    self.spawner.mikiwame_base()
+                    self.spawner.open_shelf("low")
+                    ShelfCommand("high_close")
+                    ShelfCommand("middle_close")
+                    ShelfCommand("low_open")
+                    rospy.sleep(3)
+                    self.command.vacuum_picking(waste)
+                    self.command.bring_to_box()
+                    continue
+                except tf.TransformException:
+                    self.command.look_shelf("low", "right")
+                    try:
+                        self.spawner.remove_world()
+                        self.spawner.mikiwame_base()
+                        self.spawner.open_shelf("low")
+                        ShelfCommand("high_close")
+                        ShelfCommand("middle_close")
+                        ShelfCommand("low_open")
+                        rospy.sleep(3)
+                        self.command.vacuum_picking(waste)
+                        self.command.bring_to_box()
+                        continue
+                    except tf.TransformException:
+                        continue
+
+
+        """
         #self.command.look_shelf("middle", "left")
         self.command.look_shelf("low","left")
         rospy.sleep(3.0)
@@ -151,11 +238,8 @@ class LowShelf(smach.State):
         ShelfCommand("low_open")
         
         rospy.sleep(4.0)
-        try:
-            self.command.vacuum_picking(self.debug_id)#ar_picking(self.debug_id)
-            self.command.bring_to_box()
-        except:
-            pass
+        self.command.vacuum_picking(self.debug_id)#ar_picking(self.debug_id)
+        self.command.bring_to_box()
         
         self.command.look_shelf("low","left")
         self.spawner.remove_world()
@@ -163,81 +247,20 @@ class LowShelf(smach.State):
         #x_command.look_shlef(low,right)
         ShelfCommand("low_close")
         
-        #egg sand
-        if waste_id[3] == 10:
-            self.debug_id = 10
-        elif waste_id[3] == 11:
-            self.debug_id = 11
-        elif waste_id[3] == 12:
-            self.debug_id == 12
+        # middle
         self.command.look_shelf("middle", "left")
         self.spawner.mikiwame_base()
         self.spawner.open_shelf("middle")
         ShelfCommand("middle_open")
-        rospy.sleep(4)
-        try:
-            self.command.vacuum_picking(self.debug_id)
-            self.command.bring_to_box()
-        except:
-            pass
-
-        self.command.look_shelf("middle", "left")
-        #ShelfCommand("middle_close")
-        self.spawner.remove_world()        
-        
-        #lettuce sand
-        if waste_id[4] == 13:
-            self.debug_id = 13
-        elif waste_id[4] == 14:
-            self.debug_id = 14
-        elif waste_id[4] == 15:
-            self.debug_id = 15
-        
-        self.command.look_shelf("middle", "left")
-        self.spawner.mikiwame_base()
-        self.spawner.open_shelf("middle")
-        #ShelfCommand("middle_open")
-        rospy.sleep(4)
-        try:
-            self.command.vacuum_picking(self.debug_id)
-            self.command.bring_to_box()
-        except:
-            pass
-
-        self.command.look_shelf("middle","left")
-        self.spawner.remove_world()
-
-
-
-
-
-
-        # pouch 
-        if waste_id[5] == 16:
-            self.debug_id = 16
-        elif waste_id[6] == 17:
-            self.debug_id = 17
-        elif waste_id[7] == 18:
-            self.debug_id = 18
-        self.command.look_shelf("middle", "right")
-        self.spawner.mikiwame_base()
-        self.spawner.open_shelf("middle")
-        #ShelfCommand("middle_open")
-        rospy.sleep(4)
-        try:
-            self.command.vacuum_picking(self.debug_id)
-            self.command.bring_to_box()
-        except:
-            pass
-
+        rospy.sleep(10)
+        self.command.vacuum_picking(self.debug_id)
+        self.command.bring_to_box()
         self.command.look_shelf("middle", "left")
         ShelfCommand("middle_close")
+        """
         self.spawner.remove_world()
 
-        
-
-
-        move_goal()
+        #move_goal()
         return 'success'
 
 
