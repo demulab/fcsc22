@@ -12,17 +12,27 @@ import smach_ros
 
 sys.path.append('/home/demulab/opl_ws/src/fcsc22/robot/script')
 from module import *
+from fcsc_command import *
+
 
 def main():
  #   arm = Arm()
-    ShelfCommand("low_open")
-    rospy.sleep(4.0)
-    ShelfCommand("low_close")
+   # ShelfCommand("low_close")
+    command = XArm_command()
+    command.ar_picking(61)
 """
-    move = Move()
+move = Move()
     rospy.sleep(2.0)
-    move.y_move(1.4)
+    move.y_move(1.25)
     rospy.sleep(1.0)
+    move.x_move(-1.20)
+    ShelfCommand("low_open")
+    rospy.sleep(10.0)
+#    ShelfCommand("low_close")
+#    move.x_move(1.20)
+#    rospy.sleep(1.0)
+#    move.y_move(-1.25)
+
     move.x_move(-1.25)
     rospy.sleep(2.0)
     move.x_move(1.25)
