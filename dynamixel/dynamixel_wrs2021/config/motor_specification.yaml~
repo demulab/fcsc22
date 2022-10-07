@@ -1,0 +1,6 @@
+Endeffector_controller:
+  ID: 0
+  Return_Delay_Time: 0
+  Operating_Mode: 3
+  Profile_Acceleration: 0
+  Profile_Velocity: 50
