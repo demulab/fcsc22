@@ -1,0 +1,11 @@
+<launch>
+<!-- 2dlidar -->
+<include file="$(find sawyer_human_detector)/launch/twolidar.launch"/>
+<!-- sound -->
+<node pkg="sawyer_human_detector" name="sawyer_emergency_sound" type="sawyer_emergency_sound.py"/>
+<!-- human detector -->
+<node pkg="sawyer_human_detector" name="sawyer_human_detector_1" type="sawyer_human_detector_1.py"/>
+<node pkg="sawyer_human_detector" name="sawyer_human_detector_2" type="sawyer_human_detector_2.py"/>
+<node pkg="sawyer_human_detector" name="sawyer_emergency_controll" type="sawyer_emergency_controll.py"/>
+</launch>
+
