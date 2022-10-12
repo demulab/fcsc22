@@ -17,9 +17,12 @@ from fcsc_command import *
 
 def main():
  #   arm = Arm()
-   # ShelfCommand("low_close")
-    command = XArm_command()
-    command.ar_picking(61)
+    
+    ShelfCommand("high_open")
+    rospy.sleep(4)
+    ShelfCommand("high_close")
+
+
 """
 move = Move()
     rospy.sleep(2.0)

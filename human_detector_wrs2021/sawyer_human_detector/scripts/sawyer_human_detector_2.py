@@ -27,7 +27,7 @@ kUpdateLastImageCount  = 30.0           #比較する世界座標系の画像を
 
 kTrackingMaxDistance = 2.5                #検出距離の最大
 kTrackingMinDistance = 0.1                #検出距離の最小
-kTrackingAngle       = 90.0              #探す範囲は正面のこの角度[deg]
+kTrackingAngle       = 90              #探す範囲は正面のこの角度[deg]
 kDefaultDetectPosX	= 250.0         #検出範囲のxの初期の中心座標[px]
 kDefaultDetectPosY = 250.0              #検出範囲のyの初期の中心座標[px]
 kLostTime          = 60.0               #人を完全に見失ったと判断するループ回数、one loop 30[ms]
@@ -151,7 +151,8 @@ class Robot():
         #人を見失っているか
         self.human_lost = True
         #位置[m],向き[rad]
-        self.robot_x = self.robot_y = self.robot_theta = 0.0
+        self.robot_x = self.robot_y = 0.0
+        self.robot_theta = 0.0
         #hokuyo LiDAR UTM-30LX
         self.laser_distance = np.zeros(1081)
         self.laser_last_distance = np.zeros(1081)
@@ -175,14 +176,15 @@ class Robot():
         self.last_image_count = 0
         self.step = 0
 
-        self.laser_sub = rospy.Subscriber("/lidar2/scan2",LaserScan,self.laserCallback)
+        self.laser_sub = rospy.Subscriber("/lidar1/scan1",LaserScan,self.laserCallback)
         self.laser_sub = rospy.Subscriber("sawyer_to_lidar",Emergency,self.robotMecanumMoveJudge)
         #public
         #ローカル座標
         self.local = Pose()
         self.world = Pose()
         self.dataCount = 0
-        self.laser_angle_min = self.laser_angle_max = 0
+        self.laser_angle_min = 0
+        self.laser_angle_max = 0
         self.tracking_command = "false"
 
     '''
@@ -277,8 +279,9 @@ class Robot():
         lidar_gray_image = np.zeros((500,500),np.uint8)
 
         #中央の走査線番号
-        center = dataCount/6*5
+        center = dataCount/6*3
         #kTrackingAngle(前方90度)の走査線数
+        #270
         search_lines = int(1080*(kTrackingAngle/270.0))
 
         local = Pose()
@@ -339,7 +342,9 @@ class Robot():
     '''
 
     def laserCallback(self,data):
+        self.step = -1
         if self.step < 0 or self.step > 7 and self.step < 35:
+            #self.comeback_count = 0
             self.a = 0
             #捜査線数
             self.dataCount = np.size(data.ranges)
@@ -657,7 +662,8 @@ class Robot():
             #脚候補の中心が検出範囲尾の中にあるか
             human_pos_judge = ((math.fabs(tmp_ave_x - human_obj.image_expect_human_x) < g_find_leg_radius) and (math.fabs(tmp_ave_y - human_obj.image_expect_human_y) < g_find_leg_radius))
 
-            #片足間の重心の距離
+            #片足間の重心の距離886                             self.comeback_count = 0
+
             d = math.sqrt((leg1_point.x - leg2_point.x)**2 + (leg1_point.y - leg2_point.y)**2) /float(kMToPixel)
 
             #脚の位置からの矩形を描写
@@ -818,6 +824,7 @@ class Robot():
     def humanDetector(self):
         Human_detector = rospy.Publisher('human_detector_command', Emergency, queue_size=1)
         emergency = Emergency()
+        self.step=-1
         if self.step < 0 or self.step > 7 and self.step < 35:
             if self.detector_count > 20:
                 if 0 < self.approach_count < 5:

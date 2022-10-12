@@ -32,14 +32,15 @@ class XArm_command(object):
         self.arm = Arm()
         self.gripper = Gripper()
         self.vision = Vision()
-        self.arm.add_table()
-        self.gripper.open()
+        #self.arm.add_table()
+        #self.gripper.open()
+        self.gripper.vacuum_off()
         self.listener = tf.TransformListener()
 	print("End")
         rospy.Subscriber("ar_pose_marker", AlvarMarkers, self.ar_cb)
-
         self.ar_info = []
-########## set manipulator ##########        
+
+
     def shelf_mid(self):
         #self.gripper.close()
 	print("Start setting")
@@ -58,14 +59,12 @@ class XArm_command(object):
 	print("End setting")
 
 
-
     def setting_pose(self, trans):
         print("start setting")
         tr = trans
         self.pose = geometry_msgs.msg.Pose()
          #self.q = tf.transformations.quaternion_from_euler(0, (math.pi / 3)*0.3 , math.pi)
-
-        self.q = tf.transformations.quaternion_from_euler(0, (math.pi/ 3)*0.4, math.pi)
+        self.q = tf.transformations.quaternion_from_euler(0, (math.pi/ 3)*0.35, math.pi)
         self.pose.position.x = tr[0]
         self.pose.position.y = tr[1]
         self.pose.position.z = tr[2]
@@ -77,8 +76,6 @@ class XArm_command(object):
         self.arm.move(self.pose)
 
 
-
-    ########### grasp object ##############
     def grasp(self):
         print(self.vision.target_object.pose.pose)
         if self.vision.target_object.pose.pose.position.x == 0 and self.vision.target_object.pose.pose.position.y == 0 and self.vision.target_object.pose.pose.position.z == 0:
@@ -111,13 +108,18 @@ class XArm_command(object):
         self.gripper.close()
 
 
-############### bring to box ######################3
     def bring_to_box(self):
+        """
+        @brief 把持後のボックスへの運搬
+
+        """
+
+
+
         add_height = 0.0
 
         self.box_trans =  [[0.30, 0.0, 0.45 + add_height], [0.15, 0.20, 0.45 + add_height], [0.0, 0.35, 0.45 + add_height], [-0.24, 0.0, 0.45]]
         self.num = len(self.box_trans)
-        #self.q = tf.transformations.quaternion_from_euler(0, math.pi / 3 , math.pi/self.num)
         
         for index, way in enumerate(self.box_trans):
             self.box_pose = geometry_msgs.msg.Pose()
@@ -130,7 +132,7 @@ class XArm_command(object):
             self.box_pose.orientation.z = self.q[2]
             self.box_pose.orientation.w = self.q[3]
             self.arm.move(self.box_pose)
-        self.gripper.open()
+        self.gripper.vacuum_off()
 
 
     
@@ -168,19 +170,29 @@ class XArm_command(object):
 
 
     def look_shelf(self, step, side):
-        print("############################################")
+        added_heights = 0.32
         if step == "low":
             if side =="left":
-                self.setting_pose([0.30, 0.17, 0.48])
+                #self.setting_pose([0.30, 0, 0.48])
+                self.setting_pose([0.30, 0.17, 0.48 - added_heights])
             if side == "right":
-                self.setting_pose([0.30, -0.17, 0.48])
+                #self.setting_pose([0.30, 0, 0.48])
+                self.setting_pose([0.30, -0.17, 0.48 - added_heights])
         elif step == "middle":
             if side =="left":
-                 self.setting_pose([0.30, 0.20, 0.59])
+                #self.setting_pose([0.30, 0, 0.59])
+                self.setting_pose([0.30, 0.17, 0.61 - added_heights])
             if side == "right":
-                 self.setting_pose([0.30, -0.20, 0.59])
-        #elif step == "high":
-
+                #self.setting_pose([0.30, 0, 0.59])
+                self.setting_pose([0.30, -0.17, 0.61 - added_heights])
+        elif step == "high":
+            if side == "left":
+                #self.setting_pose([0.30, 0, 0.70])
+                self.setting_pose([0.30, 0.15, 0.70 - added_heights])
+            if side == "right":
+                #self.setting_pose([0.30, 0, 0.70])
+                self.setting_pose([0.30, -0.15, 0.70 - added_heights])
+        
 
     def calc_z_axis_direction(self, roll, pitch, yaw):
     
@@ -208,13 +220,6 @@ class XArm_command(object):
         @brief　確認用のコード兼インスタンス変数へのデータ格納
 
         """
-        """ 
-        for i in msg.markers:
-            print(i.id)
-            print(i.pose)
-            print(i.pose.pose.orientation.x)
-       """ 
-
         self.ar_info = msg.markers
 
 
@@ -226,42 +231,10 @@ class XArm_command(object):
         print("ar_vacuum")
         subject = ar_id
         self.ar_name = "ar_marker_" + str(subject)
-
-        """
-        （（（（やりたい全体の流れ））））
-
-        ARマーカのリストの目当てのidを持つデータを抽出
-        　　　　　　　　　　　↓
-        つかみやすい姿勢を持つマーカを選定(?)
-        　　　　　　　　　　　↓
-                            把持
-        """
         # tfの待機
         self.listener.waitForTransform("/camera_link", self.ar_name, rospy.Time(), rospy.Duration(10.0))
-
-       #idの一致するデータの探索 
-        for d in self.ar_info:
-            if d.id == subject:
-                sub_trans  = d.pose.pose 
-       
-        ox = sub_trans.orientation.x
-        oy = sub_trans.orientation.y
-        oz = sub_trans.orientation.z
-        ow = sub_trans.orientation.w
-        
-        eular = tf.transformations.euler_from_quaternion((ox, oy, oz, ow))
-        """
-        vec_z = self.calc_z_axis_direction(eular[0], eular[1], eular[2])
-        #print(eular)
-        #print(vec_z)
-        
-        offset = 0.03
-        
-        up_point = offset * vec_z
-        print(up_point)
-        """
         # tfを待つスリープ
-        rospy.sleep(10)
+        rospy.sleep(3)
         self.target_pose = geometry_msgs.msg.Pose()
         (trans,rot) = self.listener.lookupTransform('/world', '/%s' % (self.ar_name), rospy.Time(0))
         # 垂直方向の計算
@@ -269,33 +242,65 @@ class XArm_command(object):
         vec_z = self.calc_z_axis_direction(euler[0], euler[1], euler[2])
         offset = 0.03
         up_point = offset * vec_z
-        self.q = rot
-
+        self.q = tf.transformations.quaternion_from_euler(0, 0 , math.pi)
         # approach 1
-        self.target_pose.position.x = trans[0] + (up_point[0][0] * 2.5)
-        self.target_pose.position.y = trans[1] + (up_point[1][0] * 2.5)
-        self.target_pose.position.z = trans[2] + (up_point[2][0] * 2.5)
+        self.target_pose.position.x = trans[0] + (up_point[0][0] * 5)
+        self.target_pose.position.y = trans[1] + (up_point[1][0] * 5) #- 0.02
+        self.target_pose.position.z = trans[2] + (up_point[2][0] * 5)
         self.target_pose.orientation.x = self.q[0]#rot[0]
         self.target_pose.orientation.y = self.q[1]#rot[1]
         self.target_pose.orientation.z = self.q[2]#rot[2]
         self.target_pose.orientation.w = self.q[3]#rot[3]
         print(self.target_pose)
         self.arm.move(self.target_pose)
-
+        rospy.sleep(1)
+        (trans,rot) = self.listener.lookupTransform('/world', '/%s' % (self.ar_name), rospy.Time(0))
+        # 垂直方向の計算
+        euler = tf.transformations.euler_from_quaternion(rot)
+        vec_z = self.calc_z_axis_direction(euler[0], euler[1], euler[2])
+        offset = 0.03
+        up_point = offset * vec_z
+        self.q = rot
         # approach 2
-        self.target_pose.position.x = trans[0] #+ up_point[0][0]
-        self.target_pose.position.y = trans[1] #+ up_point[1][0]
-        self.target_pose.position.z = trans[2] #+ up_point[2][0]
+        self.target_pose.position.x = trans[0] - (1.76 * up_point[0][0]) #- 0.01#(1.89 * up_point[0][0]) - 0.02
+        self.target_pose.position.y = trans[1] - (1.76 * up_point[1][0]) - 0.05#- 0.03#(1.89 * up_point[1][0]) - 0.04
+        self.target_pose.position.z = trans[2] - (1.76 * up_point[2][0])
         self.target_pose.orientation.x = self.q[0]#rot[0]
         self.target_pose.orientation.y = self.q[1]#rot[1]
         self.target_pose.orientation.z = self.q[2]#rot[2]
         self.target_pose.orientation.w = self.q[3]#rot[3]
         print(self.target_pose)
-
         self.arm.move(self.target_pose)
-        self.gripper.close()
+        self.gripper.vacuum_on()
+        rospy.sleep(2.0)
         
+    
+    def waste_high_objects(self):
+            """
+            @brief 廃棄タスクの上段ループ
 
+            """
+            
+        high_list = range(1, 10)
+        middle_list = range(10, 19)
+        low_list = range(19, 28)
+        self.shelf_flag = 0
+        for id in high_list:
+            try:
+                self.look_shelf("high", "left")
+                self.vacuum_picking(id)
+                self.bring_to_box()
+                continue
+            except:
+                try:
+                    self.look_shelf("high", "right")
+                    self.vacuum_picking(id)
+                    self.bring_to_box()
+                    continue
+                except:
+                    continue
+
+                    
 
 if __name__ == "__main__":
     rospy.init_node('shelf', anonymous=True)
@@ -303,15 +308,13 @@ if __name__ == "__main__":
     
     try:
         
-        #robot.look_shelf("low", "right")
-        #robot.ar_picking()
         robot.look_shelf("low", "right")
-        #rospy.sleep(15)
-        #robot.grasp()
-        #robot.bring_to_box()
-        robot.vacuum_picking(0)
+        robot.vacuum_picking(1)
         robot.bring_to_box()
-        robot .look_shelf("low", "right")
+        robot.look_shelf("low", "right")
+        #robot.gripper.vacuum_on()
+        #rospy.sleep(1)
+        #robot.gripper.vacuum_off()
         print("vacuum end")
         #rospy.spin()
     except rospy.ROSInterruptException:

@@ -29,7 +29,8 @@ kTrackingMaxDistance = 2.5                #検出距離の最大
 kTrackingMinDistance = 0.1                #検出距離の最小
 kTrackingAngle       = 90.0              #探す範囲は正面のこの角度[deg]
 kDefaultDetectPosX	= 250.0         #検出範囲のxの初期の中心座標[px]
-kDefaultDetectPosY = 250.0              #検出範囲のyの初期の中心座標[px]
+#kDefaultDetectPosX      = 0.0 
+kDefaultDetectPosY = 255.0              #検出範囲のyの初期の中心座標[px]
 kLostTime          = 60.0               #人を完全に見失ったと判断するループ回数、one loop 30[ms]
 kLegBetweenDistance = 0.6               #人の足だと判断する足候補感の距離[m]
 approach_count = 0
@@ -162,6 +163,13 @@ class Robot():
         self.human_approach_angle = 0.0
         self.human_approach_distance_cos = 0.0
         self.human_approach_distance_sin = 0.0
+        self.restart = False
+        self.comeback = False
+        self.restart_count = 0
+        self.comeback_count = 0
+        self.approach_count = 0
+        self.detector_count = 0
+        self.sleep_time = 0
 
         #画像のサイズを超えて書き込もうとした際、その座標を中心からの座標に更新するための値
         self.displace_x = self.displace_y = 0.0
