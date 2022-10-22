@@ -32,43 +32,80 @@
         izz="0.00025642" />
     </inertial>
     <visual>
+      <!--origin
+        xyz="0.006 0 -0.012"
+        rpy="-1.57 3.14 0" /-->
       <origin
-        xyz="0.006 0 0.038"
-        rpy="-1.57 3.14 0" />
+        xyz="0.006 0 -0.012"
+        rpy="-1.57 3.14 -0.2" />
+
       <geometry>
         <!--mesh
           filename="package://xarm_description/meshes/vacuum_gripper/visual/vacuum_gripper.STL" /-->
-        <mesh filename="package://xarm_description/meshes/vacuum_gripper/visual/end_effector.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://xarm_description/meshes/vacuum_gripper/visual/short_endeffector.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="White">
-        <color rgba="1.0 1.0 1.0 1.0"/>
+        <color rgba="1.0 1.0 0 1.0"/>
       </material>
     </visual>
     <collision>
       <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+          xyz="0.006 0 -0.012"
+          rpy="-1.57 3.14 -0.2" />
       <geometry>
         <!--mesh
           filename="package://xarm_description/meshes/vacuum_gripper/collision/vacuum_gripper.STL" /-->
-        <mesh filename="package://xarm_description/meshes/vacuum_gripper/collision/end_effector.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://xarm_description/meshes/vacuum_gripper/collision/short_endeffector.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
   </link>
 
   <link name="${prefix}link_tcp" />
-
   <joint
     name="${prefix}joint_tcp"
     type="fixed">
-    <origin
+    <!--origin
       xyz="0 0 0.126"
+      rpy="0 0 0" /-->
+    <!--origin
+      xyz="0 0.02 0.2"
+      rpy="0 0 0" /-->
+       <origin
+      xyz="-0.0017 0.0237 0.2"
       rpy="0 0 0" />
+
     <parent
       link="${prefix}xarm_vacuum_gripper_link" />
     <child
       link="${prefix}link_tcp" />
   </joint>
+
+  <!--link name="${prefix}link_tcp2" />
+  <joint
+    name="${prefix}joint_tcp2"
+    type="fixed">
+    <origin
+      xyz="0 0.03 0.2"
+      rpy="0 0 0" />
+    <parent
+      link="${prefix}xarm_vacuum_gripper_link" />
+    <child
+      link="${prefix}link_tcp2" />
+  </joint>
+
+  <link name="${prefix}link_tcp3" />
+  <joint
+    name="${prefix}joint_tcp3"
+    type="fixed">
+    <origin
+      xyz="0 0.03 0.2"
+      rpy="0 0 0" />
+    <parent
+      link="${prefix}xarm_vacuum_gripper_link" />
+    <child
+      link="${prefix}link_tcp3" />
+  </joint-->
+
 
   </xacro:macro>
 

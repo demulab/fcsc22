@@ -33,6 +33,8 @@ class Manipulation(object):
         self.target_pose = geometry_msgs.msg.Pose()
         self.ar_pose = geometry_msgs.msg.Pose()
         rospy.Subscriber("/ar_pose", Pose, self.target_pose_callback)
+        #added wrs2022
+        self.group.set_planning_time(7)
 
     def plan(self):
         print("***generate_plan***") 
@@ -172,7 +174,7 @@ class xArm6(Manipulation):
 
 if __name__=='__main__':
     try:
-        rospy.init_node("xArm6_Moveit")
+        rospy.init_node("xArm6_Moveit", anonymous = True)
         xArm6()
         rospy.spin()
     except rospy.ROSInterruptException: 

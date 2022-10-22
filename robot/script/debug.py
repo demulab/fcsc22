@@ -6,7 +6,7 @@ import sys
 import math
 
 import rospy
-from std_msgs.msg import String
+from std_msgs.msg import String, Bool
 import smach
 import smach_ros
 
@@ -16,12 +16,26 @@ from fcsc_command import *
 
 
 def main():
- #   arm = Arm()
+    """
+    pub = rospy.Publisher("/pickup", Bool, queue_size = 10)
+    rate = rospy.Rate(1)
+    while not rospy.is_shutdown():
+        d = Bool()
+        d.data = True
+        print("aaaaaaa")
+        print(d.data)
+        pub.publish(d)
+        rospy.loginfo(d)
+        rate.sleep()
+    """
+
+    
+    #   arm = Arm()
     
     ShelfCommand("high_open")
     rospy.sleep(4)
     ShelfCommand("high_close")
-
+    
 
 """
 move = Move()
@@ -116,8 +130,8 @@ move = Move()
 
 if __name__ == '__main__':
     rospy.init_node("debug", anonymous=True)
-    print("aaaaaaaaaaa")
     main()
+
 """
     try:
         main() 

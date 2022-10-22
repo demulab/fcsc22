@@ -128,18 +128,34 @@ class LowShelf(smach.State):
         print(waste_id[6])
         
         rospy.sleep(1.0)
-        move_shelf()
-        self.debug_id = 19
+        #move_shelf()
+        #self.debug_id = 19
         self.spawner.remove_world()
         self.command.look_shelf("high","left")
         self.spawner.mikiwame_base()
         self.spawner.open_shelf("high")
         ShelfCommand("high_open")
-        rospy.sleep(5.0)
-        self.command.vacuum_picking(1)
+        rospy.sleep(2.0)
+        ids = range(1, 7)
+        flag = self.command.get_optimul_ar(ids)
+        print("###########################")
+        print(flag)
+        print("###########################")
+        if flag == 0:
+            self.command.look_shelf("high","right")
+            self.command.get_optimul_ar(ids)
         self.command.bring_to_box()
-        ShelfCommand("high_close")
-        move_goal()
+
+        # next object
+        self.command_look_shelf("")
+        
+        
+
+
+
+        #self.command.bring_to_box()
+        #ShelfCommand("high_close")
+        #move_goal()
         return 'success'
 
 

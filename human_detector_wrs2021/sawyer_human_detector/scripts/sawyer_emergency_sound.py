@@ -17,7 +17,7 @@ class Robot():
         emergency = msg
         if emergency.approach == True and self.approach_sound == False and self.restart_comeback_sound == False:
             print("approach")
-            f = wave.open("/home/demulab/opl_ws/src/sawyer_wrs2021/sawyer_human_detector_wrs2021/sawyer_human_detector/wav/approach.wav","rb")
+            f = wave.open("/home/demulab/opl_ws/src/fcsc22/human_detector_wrs2021/sawyer_human_detector/wav/approach.wav","rb")
             p = pyaudio.PyAudio()
             stream = p.open(format=p.get_format_from_width(f.getsampwidth()), channels=f.getnchannels(), rate=f.getframerate(), output=True)
             data = f.readframes(chunk)
@@ -31,7 +31,7 @@ class Robot():
             self.restart_comeback_sound = True
         elif emergency.evacuation == True and self.evacuation_sound == False:
             print("evacuation")
-            f = wave.open("/home/demulab/opl_ws/src/sawyer_wrs2021/sawyer_human_detector_wrs2021/sawyer_human_detector/wav/evacuation.wav","rb")
+            f = wave.open("/home/demulab/opl_ws/src/fcsc22/human_detector_wrs2021/sawyer_human_detector/wav/evacuation.wav","rb")
             p = pyaudio.PyAudio()
             stream = p.open(format=p.get_format_from_width(f.getsampwidth()), channels=f.getnchannels(), rate=f.getframerate(), output=True)
             data = f.readframes(chunk)
@@ -45,7 +45,7 @@ class Robot():
             self.restart_comeback_sound = True
         elif (emergency.comeback == True or emergency.restart == True) and self.restart_comeback_sound == True:
             print("comeback or restart")
-            f = wave.open("/home/demulab/sawyer_ws/src/sawyer_wrs2021/sawyer_human_detector_wrs2021/sawyer_human_detector/wav/comeback.wav","rb")
+            f = wave.open("/home/demulab/opl_ws/src/fcsc22/human_detector_wrs2021/sawyer_human_detector/wav/comeback.wav","rb")
             p = pyaudio.PyAudio()
             stream = p.open(format=p.get_format_from_width(f.getsampwidth()), channels=f.getnchannels(), rate=f.getframerate(), output=True)
             data = f.readframes(chunk)
@@ -60,7 +60,7 @@ class Robot():
             self.restart_comeback_sound = False
         elif emergency.approach == False and emergency.evacuation == False and emergency.restart == False and emergency.comeback == False and self.restart_comeback_sound == True and (self.evacuation_sound == True or self.approach_sound == True):
             print("comeback")
-            f = wave.open("/home/ren/opl_ws/src/sawyer_wrs2021/sawyer_human_detector_wrs2021/sawyer_human_detector/wav/comeback.wav","rb")
+            f = wave.open("/home/demulab/opl_ws/src/fcsc22/human_detector_wrs2021/sawyer_human_detector/wav/comeback.wav","rb")
             p = pyaudio.PyAudio()
             stream = p.open(format=p.get_format_from_width(f.getsampwidth()), channels=f.getnchannels(), rate=f.getframerate(), output=True)
             data = f.readframes(chunk)

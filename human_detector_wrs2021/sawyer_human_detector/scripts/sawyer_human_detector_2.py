@@ -176,7 +176,7 @@ class Robot():
         self.last_image_count = 0
         self.step = 0
 
-        self.laser_sub = rospy.Subscriber("/lidar1/scan1",LaserScan,self.laserCallback)
+        self.laser_sub = rospy.Subscriber("/lidar2/scan2",LaserScan,self.laserCallback)
         self.laser_sub = rospy.Subscriber("sawyer_to_lidar",Emergency,self.robotMecanumMoveJudge)
         #public
         #ローカル座標
@@ -279,8 +279,7 @@ class Robot():
         lidar_gray_image = np.zeros((500,500),np.uint8)
 
         #中央の走査線番号
-        center = dataCount/6*3
-        #kTrackingAngle(前方90度)の走査線数
+        center = dataCount/6*1.5        #kTrackingAngle(前方90度)の走査線数
         #270
         search_lines = int(1080*(kTrackingAngle/270.0))
 
@@ -289,7 +288,7 @@ class Robot():
 
         for j in range(int(center - search_lines/2),int(center + search_lines/2)+1):
             #捜査線の角度
-            angle = (laser_angle_max-laser_angle_min)*j/float(dataCount)+laser_angle_min-1.5708
+            angle = (laser_angle_max-laser_angle_min)*j/float(dataCount)+laser_angle_min+1.5708
             #画像座標系に変換
             tmp = int(kMToPixel * self.laser_distance[j] * math.cos(angle))
             #rosは進行方向がx,横がy
@@ -342,8 +341,7 @@ class Robot():
     '''
 
     def laserCallback(self,data):
-        self.step = -1
-        if self.step < 0 or self.step > 7 and self.step < 35:
+        if self.step < 0 or self.step >= 1 and self.step < 80:
             #self.comeback_count = 0
             self.a = 0
             #捜査線数
@@ -824,8 +822,7 @@ class Robot():
     def humanDetector(self):
         Human_detector = rospy.Publisher('human_detector_command', Emergency, queue_size=1)
         emergency = Emergency()
-        self.step=-1
-        if self.step < 0 or self.step > 7 and self.step < 35:
+        if self.step < 0 or self.step >= 1 and self.step < 80:
             if self.detector_count > 20:
                 if 0 < self.approach_count < 5:
                     if self.human_lost == False and self.human_approach_distance_sin <= 1.1 and self.human_approach_distance_cos <= 1.85:

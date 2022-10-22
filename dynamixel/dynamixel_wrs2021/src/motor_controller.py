@@ -7,6 +7,7 @@ from std_msgs.msg import String
 from dynamixel_workbench_msgs.msg import DynamixelStateList
 from dynamixel_workbench_msgs.srv import DynamixelCommand
 
+ID = 4
 class MotorController(object):
     def __init__(self):
         rospy.Subscriber('/dynamixel_workbench/dynamixel_state',DynamixelStateList,self.getMotorStateCB)
@@ -56,26 +57,26 @@ class JointController(MotorController):
         if type(req) == type(String()):
             req = req.data
         if req == "OPEN":
-            self.controlCurrent(4, 0)
+            self.controlCurrent(ID, 0)
             self.controlPosition(4, self.OPEN_POSITION)
             rospy.sleep(0.5)
             while self.rotation_velocity[0] > 0:
                 pass
             else:
-                self.controlCurrent(4, 500)
+                self.controlCurrent(ID, 500)
             rospy.loginfo("OPEN")
             return True
         elif req == "CLOSE":
             goal_position = self.CLOSE_POSITION
             grasp_flg = True
-            self.controlCurrent(4, 500)
+            self.controlCurrent(ID, 500)
             self.controlPosition(4, goal_position)
             rospy.sleep(0.5)
         while self.rotation_velocity[0] > 0:
             pass
         else:
             self.controlPosition(4, self.current_pose[0])
-            self.controlCurrent(4, 0)
+            self.controlCurrent(ID, 500)
         grasp_flg = self.torque_error[0] > 30 
         return grasp_flg
 

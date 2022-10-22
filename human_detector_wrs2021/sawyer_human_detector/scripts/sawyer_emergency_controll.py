@@ -24,8 +24,7 @@ class Robot():
         detector1 = msg1
         detector2 = msg2
         # print(self.step)
-        self.step = -1
-        if self.step < 0 or self.step > 7 and self.step < 35:
+        if self.step < 0 or self.step > 1 and self.step < 85:
             print("step in")
             if self.detector_count > 20:
                 if 0 < self.approach_count < 5:
