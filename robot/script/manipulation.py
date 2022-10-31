@@ -154,6 +154,7 @@ class xArm6(Manipulation):
             rpy = tf.transformations.euler_from_quaternion((goal.target_pose.orientation.x, goal.target_pose.orientation.y, goal.target_pose.orientation.z, goal.target_pose.orientation.w))
             self.set_target_pose_euler(goal.target_pose.position.x, goal.target_pose.position.y + 0.05, goal.target_pose.position.z + 0.04, -1 * rpy[0], math.pi + rpy[1], rpy[2])
             plan = self.plan()
+            #print("plan", plan)
             if not plan.joint_trajectory.points:
                 feedback.plan = False
                 self._xarm_server.publish_feedback(feedback)

@@ -32,11 +32,15 @@ def main():
     
     #   arm = Arm()
     
+    ShelfCommand("low_open")
+    rospy.sleep(4)
+    ShelfCommand("low_close")
+    ShelfCommand("middle_open")
+    rospy.sleep(4)
+    ShelfCommand("middle_close")
     ShelfCommand("high_open")
     rospy.sleep(4)
     ShelfCommand("high_close")
-    
-
 """
 move = Move()
     rospy.sleep(2.0)

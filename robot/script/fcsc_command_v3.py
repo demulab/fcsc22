@@ -589,7 +589,7 @@ class XArm_command(object):
         # pull up
         #self.target_pose.position.x = trans[0] + (3 * up_point[0][0]) - 0.005#- 0.02#+ (0 * x_point[    0][0]) - (0.4 * y_point[0][0]) #- 0.01#(1.89 * up_point[0][0]) - 0.02
         #self.target_pose.position.y = trans[1] + (3 * up_point[1][0]) - 0.033#+ (0 * x_point[1][0])     - (0.4 * y_point[1][0]) #- 0.03#(1.89 * up_point[1][0]) - 0.04
-        self.target_pose.position.z += 0.1 #+ (0 * x_point[2][0]) - (0.4     * y_point[2][0])
+        self.target_pose.position.z += 0.2#+ (0 * x_point[2][0]) - (0.4     * y_point[2][0])
         print(self.target_pose)
         self.arm.move(self.target_pose)
 
@@ -849,10 +849,12 @@ if __name__ == "__main__":
     try:
         #robot.display(None)
         
-        ##robot.look_shelf("middle", "left")
+        #robot.look_shelf("high", "right")
+        #robot.look_shelf("middle", "left")
+        robot.look_shelf("middle", "right")
         #rospy.sleep(4)
         #robot.display("A", "pick")
-        robot.display("A", "place")
+        #robot.display("A", "place")
         
         #robot.look_shelf("low", "right")
 

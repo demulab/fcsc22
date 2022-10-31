@@ -118,7 +118,6 @@ def humanDetectCB(msg):
             for i in range(5):
                 mani.stop()
                 rospy.sleep(0.5)
-            rospy.sleep(4.0)
             save_step = step
             save_step_flg = True
             print("save_step",save_step)
@@ -144,18 +143,19 @@ def humanDetectCB(msg):
 
 def move_shelf():
     print("Move start")
-    rospy.sleep(2.0)
-    move.y_move(1.15)
-    rospy.sleep(1.0)
-    move.x_move(-1.30)
-    rospy.sleep(2.0)
-    print("Move end")
+   # rospy.sleep(2.0)
+   # move.y_move(1.15)
+   # rospy.sleep(1.0)
+   # move.x_move(-1.30)
+   # rospy.sleep(2.0)
+   # print("Move end")
 
 def move_goal():
-    rospy.sleep(2.0)
-    move.x_move(1.25)
-    rospy.sleep(1.0)
-    move.y_move(-1.3)
+    print("move_goal")
+   # rospy.sleep(2.0)
+   # move.x_move(1.25)
+   # rospy.sleep(1.0)
+   # move.y_move(-1.3)
     rospy.sleep(2.0)
 
 
@@ -225,13 +225,11 @@ def main():
                 if 1 <= save_step <= 29:
                     ShelfCommand("high_close")
                     print("haigh_shelf_close")
-                    #move.x_move(-1.25)
                     move.x_move(1.25)
                     command.look_shelf("high","left")
                 elif 30 <= save_step <= 56:
                     ShelfCommand("middle_close")
                     print("middle_shelf_close")
-                    #move.x_move(-1.25)
                     move.x_move(1.25)
                     command.look_shelf("middle","left")
 
@@ -239,15 +237,13 @@ def main():
                 elif 57 <= save_step <= 75:
                     ShelfCommand("low_close")
                     print("high_shelf_close")
-                    #move.x_move(-1.25)
                     move.x_move(1.25)
                     command.look_shelf("low","left")
                    #irmagician
                 hoge = True
                 step = save_step
 
-                rospy.sleep(5.0)
-                #move.x_move(1.25)
+                rospy.sleep(8.0)
                 move.x_move(-1.25)
                 print("step",step)
                 if 1 <= step <= 29:
@@ -275,14 +271,12 @@ def main():
                 if 1 <= save_step <= 29:
                     ShelfCommand("high_close")
                     print("haigh_shelf_close")
-                    #move.x_move(-1.25)
                     move.x_move(1.25)
                     command.look_shelf("high","left")
                      #irmacgisyanclose
                 elif 30 <= save_step <= 55:
                     ShelfCommand("middle_close")
                     print("middle_shelf_close")
-                    #move.x_move(-1.25)
                     move.x_move(1.25)
                     command.look_shelf("middle","left")
 
@@ -290,7 +284,6 @@ def main():
                 elif 56 <= save_step <= 100:
                     ShelfCommand("low_close")
                     print("high_shelf_close")
-                    #move.x_move(-1.25)
                     move.x_move(1.25)
                     command.look_shelf("low","left")
                     #irmagician
@@ -298,9 +291,7 @@ def main():
                 step = save_step
 
                 rospy.sleep(8.0)
-                #left
-                #move.x_move(1.25)
-                move.x_move(-1.25)
+                #move.x_move(-1.25)
                 print("step",step)
                 if 1 <= step <= 29:
                     ShelfCommand("high_open")

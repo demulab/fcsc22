@@ -114,11 +114,12 @@ def humanDetectCB(msg):
     print(msg.sawyerstop)
     if msg.sawyerstop ==True:
         print("sub_sawyer_stop")
+        print(save_step_flg)
         if save_step_flg == False:
-            for i in range(5):
+            for i in range(15):
                 mani.stop()
-                rospy.sleep(0.5)
-            rospy.sleep(4.0)
+                rospy.sleep(0.3)
+            vacuum(False)
             save_step = step
             save_step_flg = True
             print("save_step",save_step)
@@ -169,6 +170,9 @@ def switchCB(msg):
 
 
 def main():
+    # flags
+    retry_flag = False
+
     #rospy.init_node('main',anonymous=True)
     emergency = Emergency()
     #pub
@@ -246,7 +250,7 @@ def main():
                 hoge = True
                 step = save_step
 
-                rospy.sleep(5.0)
+                rospy.sleep(8.0)
                 #move.x_move(1.25)
                 move.x_move(-1.25)
                 print("step",step)
@@ -323,20 +327,17 @@ def main():
 ##########################################################        
         # call planning scene
         elif step == 2:
+            if retry_flag == True:
+                spawner.remove_world()
+                command.look_shelf("high","left")
+                spawner.mikiwame_base()
+                spawner.open_shelf("high")
             vacuum(False)
             pick(False)
-            #rospy.sleep(3)
-            #pick(False)
-            #rospy.sleep(3)
-            #pick(True)
-            #ip_datas =  get_alphabet()
             print(ip_datas)
             ShelfCommand("high_open")
-            #spawner.remove_world()
-            #spawner.mikiwame_base()
-            #spawner.open_shelf("high")
             rospy.sleep(1.0)
-            step += 1
+            step  = time_count(step)
 
         # onigiri A 01
         elif step == 3:
@@ -1444,12 +1445,12 @@ def main():
     
         # katsu V 22
         elif step == 66:
-            if "V" in ip_datas:
+            if "V" in ip_datas or "W" in ip_datas or  "X" in ip_datas:
                 vacuum(False)
                 command.look_shelf("low","left")
                 ShelfCommand("low_open")
                 rospy.sleep(5)
-                ids = [91]
+                ids = [91, 92, 93]
                 flag = False
                 left_ar_flag = command.exist_ar(ids)
                 if left_ar_flag == True:
@@ -1489,12 +1490,12 @@ def main():
 
         # katsu W 23
         elif step == 69:
-            if "W" in ip_datas:
+            if "V" in ip_datas or "W" in ip_datas or  "X" in ip_datas:
                 vacuum(False)
                 command.look_shelf("low","left")
                 ShelfCommand("low_open")
                 rospy.sleep(5)
-                ids = [92]
+                ids = [91, 92, 93]
                 flag = False
                 left_ar_flag = command.exist_ar(ids)
                 if left_ar_flag == True:
@@ -1535,12 +1536,12 @@ def main():
 
         # katsu X 24
         elif step == 72:
-            if "X" in ip_datas:
+            if "V" in ip_datas or "W" in ip_datas or  "X" in ip_datas:
                 vacuum(False)
                 command.look_shelf("low","left")
                 ShelfCommand("low_open")
                 rospy.sleep(5)
-                ids = [93]
+                ids = [91, 92, 93]
                 flag = False
                 left_ar_flag = command.exist_ar(ids)
                 if left_ar_flag == True:
@@ -1580,12 +1581,12 @@ def main():
 
         # nori Y 25
         elif step == 75:
-            if "Y" in ip_datas:
+            if "Y" in ip_datas or "Z" in ip_datas or "a" in ip_datas:
                 vacuum(False)
                 command.look_shelf("low","left")
                 ShelfCommand("low_open")
                 rospy.sleep(5)
-                ids = [94]
+                ids = [94, 95, 96]
                 flag = False
                 left_ar_flag = command.exist_ar(ids)
                 if left_ar_flag == True:
@@ -1624,12 +1625,12 @@ def main():
 
         # nori Z 26
         elif step == 78:
-            if "Z" in ip_datas:
+            if "Y" in ip_datas or "Z" in ip_datas or "a" in ip_datas:
                 vacuum(False)
                 command.look_shelf("low","left")
                 ShelfCommand("low_open")
                 rospy.sleep(5)
-                ids = [95]
+                ids = [94, 95, 96]
                 flag = False
                 left_ar_flag = command.exist_ar(ids)
                 if left_ar_flag == True:
@@ -1669,12 +1670,12 @@ def main():
 
         # nori a 27
         elif step == 81:
-            if "a" in ip_datas:
+            if "Y" in ip_datas or "Z" in ip_datas or "a" in ip_datas:
                 vacuum(False)
                 command.look_shelf("low","left")
                 ShelfCommand("low_open")
                 rospy.sleep(5)
-                ids = [96]
+                ids = [94, 95, 96]
                 flag = False
                 left_ar_flag = command.exist_ar(ids)
                 if left_ar_flag == True:
@@ -1711,12 +1712,23 @@ def main():
             rospy.sleep(1.0)
             step = time_count(step)
             #ShelfCommand("low_close")
-#####################################        
+
+        elif step == 84:
+            ShelfCommand("low_close")
+            move.y_move(-0.2)
+            #step = 2
+            step = time_count(step)
+            if step != 100:
+                step = 2
+            retry_flag = True
+            print("\n\n\n\n\n retry \n\n\n\n\n")
+        
+        """
         elif step == 84:
             ShelfCommand("low_close")
             move_goal()
             step = 9999
-#####################################
+        """
 ##########################################################################
 ##########################################################################
 ############################ display #####################################

@@ -118,7 +118,6 @@ def humanDetectCB(msg):
             for i in range(5):
                 mani.stop()
                 rospy.sleep(0.5)
-            rospy.sleep(4.0)
             save_step = step
             save_step_flg = True
             print("save_step",save_step)
@@ -169,6 +168,9 @@ def switchCB(msg):
 
 
 def main():
+    # flags
+    retry_flag = False
+
     #rospy.init_node('main',anonymous=True)
     emergency = Emergency()
     #pub
@@ -206,7 +208,7 @@ def main():
             spawner.open_shelf("high")
             #ip_datas =  get_alphabet()
 #################################
-            move_shelf()
+            #move_shelf()
 ################################
             #get_id()
             rospy.sleep(2.0)
@@ -246,7 +248,7 @@ def main():
                 hoge = True
                 step = save_step
 
-                rospy.sleep(5.0)
+                rospy.sleep(8.0)
                 #move.x_move(1.25)
                 move.x_move(-1.25)
                 print("step",step)
@@ -323,20 +325,17 @@ def main():
 ##########################################################        
         # call planning scene
         elif step == 2:
+            if retry_flag == True:
+                spawner.remove_world()
+                command.look_shelf("high","left")
+                spawner.mikiwame_base()
+                spawner.open_shelf("high")
             vacuum(False)
             pick(False)
-            #rospy.sleep(3)
-            #pick(False)
-            #rospy.sleep(3)
-            #pick(True)
-            #ip_datas =  get_alphabet()
             print(ip_datas)
             ShelfCommand("high_open")
-            #spawner.remove_world()
-            #spawner.mikiwame_base()
-            #spawner.open_shelf("high")
             rospy.sleep(1.0)
-            step += 1
+            step  = time_count(step)
 
         # onigiri A 01
         elif step == 3:
@@ -1711,12 +1710,22 @@ def main():
             rospy.sleep(1.0)
             step = time_count(step)
             #ShelfCommand("low_close")
-#####################################        
+
+        elif step == 84:
+            ShelfCommand("low_close")
+            move.y_move(-0.2)
+            
+            step = time_count(step)
+            if step != 100:
+                step = 2
+            retry_flag = True
+            print("\n\n\n\n\n retry \n\n\n\n\n")
+        """
         elif step == 84:
             ShelfCommand("low_close")
             move_goal()
             step = 9999
-#####################################
+        """
 ##########################################################################
 ##########################################################################
 ############################ display #####################################
@@ -1779,7 +1788,7 @@ def main():
             elif 85 <= save_step <= 87:
                 ShelfCommand("high_close")
 
-            move_goal()
+            #move_goal()
             step += 1
         
 
