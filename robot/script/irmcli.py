@@ -8,13 +8,14 @@ import argparse
 import os
 
 here = os.path.abspath(os.path.dirname(__file__))
-ir_serial = serial.Serial("/dev/ttyACM0", 9600, timeout = 1)
+ir_serial = serial.Serial("/dev/ttyACM_IRMAGICIAN", 9600, timeout = 1)
 #ir_serial = serial.Serial("/dev/tty.usbmodem01231", 9600, timeout = 1)
 
 def captureIR(path):
   print "Capturing IR..."
   ir_serial.write("c\r\n")
-  time.sleep(3.0)
+  #time.sleep(3.0)
+  time.sleep(1.0)
   msg = ir_serial.readline()
   print msg
   if path and not 'Time Out' in msg:

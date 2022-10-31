@@ -1,14 +1,16 @@
 Panels:
   - Class: rviz/Displays
-    Help Height: 84
+    Help Height: 0
     Name: Displays
     Property Tree Widget:
       Expanded:
         - /MotionPlanning1
+        - /MotionPlanning1/Planning Request1
         - /MotionPlanning1/Planned Path1
-        - /RobotModel1
-      Splitter Ratio: 0.742560029
-    Tree Height: 405
+        - /TF1
+        - /TF1/Frames1
+      Splitter Ratio: 0.7425600290298462
+    Tree Height: 140
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -16,6 +18,10 @@ Panels:
       - /Current View1
     Name: Views
     Splitter Ratio: 0.5
+Preferences:
+  PromptSaveOnExit: true
+Toolbars:
+  toolButtonStyle: 2
 Visualization Manager:
   Class: ""
   Displays:
@@ -25,7 +31,7 @@ Visualization Manager:
       Color: 160; 160; 164
       Enabled: true
       Line Style:
-        Line Width: 0.0299999993
+        Line Width: 0.029999999329447746
         Value: Lines
       Name: Grid
       Normal Cell Count: 0
@@ -45,9 +51,9 @@ Visualization Manager:
       MoveIt_Allow_External_Program: false
       MoveIt_Allow_Replanning: false
       MoveIt_Allow_Sensor_Positioning: false
-      MoveIt_Goal_Tolerance: 0
       MoveIt_Planning_Attempts: 10
       MoveIt_Planning_Time: 5
+      MoveIt_Use_Cartesian_Path: false
       MoveIt_Use_Constraint_Aware_IK: true
       MoveIt_Warehouse_Host: 127.0.0.1
       MoveIt_Warehouse_Port: 33829
@@ -69,6 +75,11 @@ Visualization Manager:
           Expand Joint Details: false
           Expand Link Details: false
           Expand Tree: false
+          HappyDaisy:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           Link Tree Style: Links in Alphabetic Order
           link1:
             Alpha: 1
@@ -105,10 +116,24 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          link_eef:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link_tcp:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
           world:
             Alpha: 1
             Show Axes: false
             Show Trail: false
+          xarm_vacuum_gripper_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
         Loop Animation: false
         Robot Alpha: 0.5
         Robot Color: 150; 50; 150
@@ -124,12 +149,12 @@ Visualization Manager:
         Show Manipulability: false
         Show Manipulability Index: false
         Show Weight Limit: false
-        TextHeight: 0.0799999982
+        TextHeight: 0.07999999821186066
       Planning Request:
         Colliding Link Color: 255; 0; 0
         Goal State Alpha: 1
         Goal State Color: 250; 128; 0
-        Interactive Marker Size: 0
+        Interactive Marker Size: 0.25
         Joint Violation Color: 255; 0; 255
         Planning Group: xarm6
         Query Goal State: true
@@ -142,7 +167,7 @@ Visualization Manager:
       Scene Geometry:
         Scene Alpha: 1
         Scene Color: 50; 230; 50
-        Scene Display Time: 0.200000003
+        Scene Display Time: 0.20000000298023224
         Show Scene Geometry: true
         Voxel Coloring: Z-Axis
         Voxel Rendering: Occupied Voxels
@@ -153,6 +178,11 @@ Visualization Manager:
           Expand Joint Details: false
           Expand Link Details: false
           Expand Tree: false
+          HappyDaisy:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           Link Tree Style: Links in Alphabetic Order
           link1:
             Alpha: 1
@@ -189,10 +219,24 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          link_eef:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          link_tcp:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
           world:
             Alpha: 1
             Show Axes: false
             Show Trail: false
+          xarm_vacuum_gripper_link:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
         Robot Alpha: 0.5
         Show Robot Collision: false
         Show Robot Visual: true
@@ -207,6 +251,11 @@ Visualization Manager:
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
+        HappyDaisy:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         Link Tree Style: Links in Alphabetic Order
         link1:
           Alpha: 1
@@ -243,16 +292,385 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        link_eef:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link_tcp:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         world:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+        xarm_vacuum_gripper_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
       Name: RobotModel
       Robot Description: robot_description
       TF Prefix: ""
       Update Interval: 0
       Value: true
       Visual Enabled: true
+    - Class: rviz/TF
+      Enabled: true
+      Frame Timeout: 1
+      Frames:
+        All Enabled: true
+        HappyDaisy:
+          Value: true
+        ar_marker_0:
+          Value: true
+        ar_marker_11:
+          Value: true
+        ar_marker_111:
+          Value: true
+        ar_marker_129:
+          Value: true
+        ar_marker_142:
+          Value: true
+        ar_marker_158:
+          Value: true
+        ar_marker_16:
+          Value: true
+        ar_marker_168:
+          Value: true
+        ar_marker_175:
+          Value: true
+        ar_marker_19:
+          Value: true
+        ar_marker_190:
+          Value: true
+        ar_marker_191:
+          Value: true
+        ar_marker_2:
+          Value: true
+        ar_marker_20:
+          Value: true
+        ar_marker_23:
+          Value: true
+        ar_marker_24:
+          Value: true
+        ar_marker_247:
+          Value: true
+        ar_marker_25:
+          Value: true
+        ar_marker_251:
+          Value: true
+        ar_marker_27:
+          Value: true
+        ar_marker_28:
+          Value: true
+        ar_marker_29:
+          Value: true
+        ar_marker_3:
+          Value: true
+        ar_marker_31:
+          Value: true
+        ar_marker_32:
+          Value: true
+        ar_marker_34:
+          Value: true
+        ar_marker_35:
+          Value: true
+        ar_marker_36:
+          Value: true
+        ar_marker_4:
+          Value: true
+        ar_marker_41:
+          Value: true
+        ar_marker_42:
+          Value: true
+        ar_marker_44:
+          Value: true
+        ar_marker_47:
+          Value: true
+        ar_marker_48:
+          Value: true
+        ar_marker_5:
+          Value: true
+        ar_marker_50:
+          Value: true
+        ar_marker_51:
+          Value: true
+        ar_marker_6:
+          Value: true
+        ar_marker_62:
+          Value: true
+        ar_marker_64:
+          Value: true
+        ar_marker_67:
+          Value: true
+        ar_marker_7:
+          Value: true
+        ar_marker_72:
+          Value: true
+        ar_marker_73:
+          Value: true
+        ar_marker_74:
+          Value: true
+        ar_marker_76:
+          Value: true
+        ar_marker_77:
+          Value: true
+        ar_marker_78:
+          Value: true
+        ar_marker_8:
+          Value: true
+        ar_marker_80:
+          Value: true
+        ar_marker_82:
+          Value: true
+        ar_marker_83:
+          Value: true
+        ar_marker_84:
+          Value: true
+        ar_marker_85:
+          Value: true
+        ar_marker_86:
+          Value: true
+        ar_marker_87:
+          Value: true
+        ar_marker_88:
+          Value: true
+        ar_marker_89:
+          Value: true
+        ar_marker_9:
+          Value: true
+        ar_marker_90:
+          Value: true
+        ar_marker_91:
+          Value: true
+        ar_marker_94:
+          Value: true
+        base_link:
+          Value: true
+        camera_aligned_depth_to_color_frame:
+          Value: true
+        camera_color_frame:
+          Value: true
+        camera_color_optical_frame:
+          Value: true
+        camera_depth_frame:
+          Value: true
+        camera_depth_optical_frame:
+          Value: true
+        camera_link:
+          Value: true
+        link1:
+          Value: true
+        link2:
+          Value: true
+        link3:
+          Value: true
+        link4:
+          Value: true
+        link5:
+          Value: true
+        link6:
+          Value: true
+        link_base:
+          Value: true
+        link_eef:
+          Value: true
+        link_tcp:
+          Value: true
+        odom:
+          Value: true
+        world:
+          Value: true
+        xarm_vacuum_gripper_link:
+          Value: true
+      Marker Scale: 0.30000001192092896
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+      Tree:
+        world:
+          HappyDaisy:
+            {}
+          link_base:
+            link1:
+              link2:
+                link3:
+                  link4:
+                    link5:
+                      link6:
+                        link_eef:
+                          camera_link:
+                            camera_aligned_depth_to_color_frame:
+                              camera_color_optical_frame:
+                                ar_marker_0:
+                                  {}
+                                ar_marker_11:
+                                  {}
+                                ar_marker_111:
+                                  {}
+                                ar_marker_129:
+                                  {}
+                                ar_marker_142:
+                                  {}
+                                ar_marker_158:
+                                  {}
+                                ar_marker_16:
+                                  {}
+                                ar_marker_168:
+                                  {}
+                                ar_marker_175:
+                                  {}
+                                ar_marker_19:
+                                  {}
+                                ar_marker_190:
+                                  {}
+                                ar_marker_191:
+                                  {}
+                                ar_marker_2:
+                                  {}
+                                ar_marker_20:
+                                  {}
+                                ar_marker_23:
+                                  {}
+                                ar_marker_24:
+                                  {}
+                                ar_marker_247:
+                                  {}
+                                ar_marker_25:
+                                  {}
+                                ar_marker_251:
+                                  {}
+                                ar_marker_27:
+                                  {}
+                                ar_marker_28:
+                                  {}
+                                ar_marker_29:
+                                  {}
+                                ar_marker_3:
+                                  {}
+                                ar_marker_31:
+                                  {}
+                                ar_marker_32:
+                                  {}
+                                ar_marker_34:
+                                  {}
+                                ar_marker_35:
+                                  {}
+                                ar_marker_36:
+                                  {}
+                                ar_marker_4:
+                                  {}
+                                ar_marker_41:
+                                  {}
+                                ar_marker_42:
+                                  {}
+                                ar_marker_44:
+                                  {}
+                                ar_marker_47:
+                                  {}
+                                ar_marker_48:
+                                  {}
+                                ar_marker_5:
+                                  {}
+                                ar_marker_50:
+                                  {}
+                                ar_marker_51:
+                                  {}
+                                ar_marker_6:
+                                  {}
+                                ar_marker_62:
+                                  {}
+                                ar_marker_64:
+                                  {}
+                                ar_marker_67:
+                                  {}
+                                ar_marker_7:
+                                  {}
+                                ar_marker_72:
+                                  {}
+                                ar_marker_73:
+                                  {}
+                                ar_marker_74:
+                                  {}
+                                ar_marker_76:
+                                  {}
+                                ar_marker_77:
+                                  {}
+                                ar_marker_78:
+                                  {}
+                                ar_marker_8:
+                                  {}
+                                ar_marker_80:
+                                  {}
+                                ar_marker_82:
+                                  {}
+                                ar_marker_83:
+                                  {}
+                                ar_marker_84:
+                                  {}
+                                ar_marker_85:
+                                  {}
+                                ar_marker_86:
+                                  {}
+                                ar_marker_87:
+                                  {}
+                                ar_marker_88:
+                                  {}
+                                ar_marker_89:
+                                  {}
+                                ar_marker_9:
+                                  {}
+                                ar_marker_90:
+                                  {}
+                                ar_marker_91:
+                                  {}
+                                ar_marker_94:
+                                  {}
+                            camera_color_frame:
+                              {}
+                            camera_depth_frame:
+                              camera_depth_optical_frame:
+                                {}
+                          xarm_vacuum_gripper_link:
+                            link_tcp:
+                              {}
+      Update Interval: 0
+      Value: true
+    - Class: rviz/Image
+      Enabled: false
+      Image Topic: /camera/color/image_raw
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Queue Size: 2
+      Transport Hint: raw
+      Unreliable: false
+      Value: false
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /visualization_marker
+      Name: Marker
+      Namespaces:
+        basic_shapes: true
+      Queue Size: 100
+      Value: true
+    - Class: rviz/Image
+      Enabled: true
+      Image Topic: /camera/color/image_raw
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Queue Size: 2
+      Transport Hint: raw
+      Unreliable: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -269,41 +687,43 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 1.6667558
+      Distance: 1.8878177404403687
       Enable Stereo Rendering:
-        Stereo Eye Separation: 0.0599999987
+        Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.113567002
-        Y: 0.105920002
-        Z: 2.23518001e-07
+        X: -0.34913891553878784
+        Y: 0.14449965953826904
+        Z: -3.2782497783045983e-7
       Focal Shape Fixed Size: true
-      Focal Shape Size: 0.0500000007
+      Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
-      Near Clip Distance: 0.00999999978
-      Pitch: -0.040202342
+      Near Clip Distance: 0.009999999776482582
+      Pitch: 0.2552030086517334
       Target Frame: world
       Value: XYOrbit (rviz)
-      Yaw: 5.55494833
+      Yaw: 1.136808156967163
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1028
+  Height: 1025
   Help:
     collapsed: false
   Hide Left Dock: false
   Hide Right Dock: false
+  Image:
+    collapsed: false
   MotionPlanning:
     collapsed: false
   MotionPlanning - Trajectory Slider:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000002ad000003befc0200000007fb000000100044006900730070006c00610079007301000000280000022a000000d700fffffffb0000000800480065006c00700000000342000000bb0000007300fffffffb0000000a0056006900650077007300000003b0000000b0000000ad00fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000004a00fffffffb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e006701000002580000018e0000018300ffffff00000471000003be00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000100000000000001f3000003a7fc020000000dfb000000100044006900730070006c006100790073010000003d000000c9000000c900fffffffb0000000800480065006c00700000000342000000bb0000006e00fffffffb0000000a0056006900650077007300000003b0000000b0000000a400fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c006900640065007200000001b4000000410000001600000016fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067010000010c000001890000017d00fffffffb0000000a0049006d006100670065000000029a000000a40000001600fffffffb0000000a0049006d006100670065010000029b000001490000001600fffffffb0000000c00430061006d006500720061000000029a0000014a0000000000000000fb0000000c00430061006d0065007200610000000319000000cb0000000000000000fb0000000a0049006d006100670065010000029a0000014a0000000000000000fb0000000a0049006d006100670065010000029a00000148000000000000000000000587000003a700000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
-  Width: 1828
-  X: 92
-  Y: 24
+  Width: 1920
+  X: 0
+  Y: 27

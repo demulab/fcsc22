@@ -24,8 +24,8 @@ class Robot():
         detector1 = msg1
         detector2 = msg2
         # print(self.step)
-        self.step = -1
-        if self.step < 0 or self.step > 7 and self.step < 35:
+        if self.step < 0 or self.step > 1 and self.step < 85:
+            print("step in")
             if self.detector_count > 20:
                 if 0 < self.approach_count < 5:
                     if (detector1.humanlost == False and detector1.humandetectorcos <= 1.05 and detector1.humandetectorsin <= 1.65) or (detector2.humanlost == False and detector2.humandetectorsin <= 1.1 and detector2.humandetectorcos <= 1.85):

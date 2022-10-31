@@ -283,7 +283,7 @@ if __name__ == "__main__":
         robot.bring_to_box()
         """
         
-        robot.vacuum_picking(0)
+        robot.vacuum_picking(1)
         rospy.spin()
     except rospy.ROSInterruptException:
         pass

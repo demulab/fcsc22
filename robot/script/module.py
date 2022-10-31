@@ -26,6 +26,7 @@ import os
 import sys
 from std_msgs.msg import String, Float64, Bool
 from std_srvs.srv import Empty
+from xarm_msgs.srv import SetInt16
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 sys.path.append('/home/demulab/opl_ws/src/fcsc22/scout_ros/scout_navigation/srv')
 from scout_navigation.srv import NaviLocation, NaviLocationResponse
@@ -72,6 +73,7 @@ class Gripper():
         self.speed = 1200
         rospy.Subscriber("/puressure", Float32MultiArray, self.puressure_cb)
         self.puressure_right = self.puressure_left = 0
+        self.gripper_vacuum =rospy.ServiceProxy('/xarm/vacuum_gripper_set',SetInt16)
 
     def set_speed(self, speed):
         self.speed = speed
@@ -103,6 +105,14 @@ class Gripper():
     def puressure_cb(self, msg):
         self.puressure_right = msg.data[0]
         self.puressure_left = msg.data[1] 
+
+    def vacuum_on(self):
+        rospy.wait_for_service('/xarm/vacuum_gripper_set')
+        self.gripper_vacuum(1)
+
+    def vacuum_off(self):
+        rospy.wait_for_service('/xarm/vacuum_gripper_set')
+        self.gripper_vacuum(0)
 
 class Vision():
     def __init__(self):
@@ -293,7 +303,7 @@ def ShelfCommand(shelf_command):
     if shelf_command == "high_open":
         print("open")
         for i in range(0,2):
-            res = subprocess.call(["python","/home/demulab/opl_ws/src/fcsc22/robot/script/irmcli/irmcli.py","-p","-f","/home/demulab/opl_ws/src/fcsc22/robot/json/open_high_shelf.json"])
+            res = subprocess.call(["python","/home/demulab/opl_ws/src/fcsc22/robot/script/irmcli.py","-p","-f","/home/demulab/opl_ws/src/fcsc22/robot/json/open_high_shelf.json"])
         if res == 0:
             print("high_open")
     elif shelf_command == "high_close":
@@ -301,23 +311,23 @@ def ShelfCommand(shelf_command):
             res = subprocess.call(["python","/home/demulab/opl_ws/src/fcsc22/robot/script/irmcli.py","-p","-f","/home/demulab/opl_ws/src/fcsc22/robot/json/close_high_shelf.json"])
         if res == 0:
             print("high_close")
-    elif shelf_command == "middle_opne":
+    elif shelf_command == "middle_open":
         for i in range(0,2):
-            res = subprocess.call(["python","/home/demulab/opl_ws/src/fcsc22/robot/script/irmcli.py","-p","-f","/home/demulab/catkin_ws/src/fcsc22/robot/json/opne_middle_shelf.json"])
+            res = subprocess.call(["python","/home/demulab/opl_ws/src/fcsc22/robot/script/irmcli.py","-p","-f","/home/demulab/opl_ws/src/fcsc22/robot/json/open_middle_shelf.json"])
         if res == 0:
-            print("middle_opne")
+            print("middle_open")
     elif shelf_command == "middle_close":
         for i in range(0,2):
             res = subprocess.call(["python","/home/demulab/opl_ws/src/fcsc22/robot/script/irmcli.py","-p","-f","/home/demulab/opl_ws/src/fcsc22/robot/json/close_middle_shelf.json"])
         if res == 0:
-            print("middle_middle")
+            print("middle_open")
     elif shelf_command == "low_open":
         for i in range(0,2):
             res = subprocess.call(["python","/home/demulab/opl_ws/src/fcsc22/robot/script/irmcli.py","-p","-f","/home/demulab/opl_ws/src/fcsc22/robot/json/open_low_shelf.json"])
         if res == 0:
             print("low_open")
     elif shelf_command == "low_close":
-        for i in range(0,2):
+        for i in range(0,3):
             res = subprocess.call(["python","/home/demulab/opl_ws/src/fcsc22/robot/script/irmcli.py","-p","-f","/home/demulab/opl_ws/src/fcsc22/robot/json/close_low_shelf.json"])
         if res == 0:
             print("low_close")

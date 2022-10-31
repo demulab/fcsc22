@@ -27,12 +27,11 @@ kUpdateLastImageCount  = 30.0           #比較する世界座標系の画像を
 
 kTrackingMaxDistance = 2.5                #検出距離の最大
 kTrackingMinDistance = 0.1                #検出距離の最小
-kTrackingAngle       = 90.0              #探す範囲は正面のこの角度[deg]
+kTrackingAngle       = 125              #探す範囲は正面のこの角度[deg]
 kDefaultDetectPosX	= 250.0         #検出範囲のxの初期の中心座標[px]
 kDefaultDetectPosY = 250.0              #検出範囲のyの初期の中心座標[px]
 kLostTime          = 60.0               #人を完全に見失ったと判断するループ回数、one loop 30[ms]
 kLegBetweenDistance = 0.6               #人の足だと判断する足候補感の距離[m]
-approach_count = 0
 
 kImageWidth=500                         #[px]
 kImageHeight=500                        #[px]
@@ -152,7 +151,8 @@ class Robot():
         #人を見失っているか
         self.human_lost = True
         #位置[m],向き[rad]
-        self.robot_x = self.robot_y = self.robot_theta = 0.0
+        self.robot_x = self.robot_y = 0.0
+        self.robot_theta = 0.0
         #hokuyo LiDAR UTM-30LX
         self.laser_distance = np.zeros(1081)
         self.laser_last_distance = np.zeros(1081)
@@ -162,6 +162,13 @@ class Robot():
         self.human_approach_angle = 0.0
         self.human_approach_distance_cos = 0.0
         self.human_approach_distance_sin = 0.0
+        self.restart = False
+        self.comeback = False
+        self.restart_count = 0
+        self.comeback_count = 0
+        self.approach_count = 0
+        self.detector_count = 0
+        self.sleep_time = 0
 
         #画像のサイズを超えて書き込もうとした際、その座標を中心からの座標に更新するための値
         self.displace_x = self.displace_y = 0.0
@@ -170,13 +177,14 @@ class Robot():
         self.step = 0
 
         self.laser_sub = rospy.Subscriber("/lidar1/scan1",LaserScan,self.laserCallback)
-        self.laser_sub = rospy.Subscriber("/sawyer_to_lidar",Emergency,self.robotMecanumMoveJudge)
+        self.laser_sub = rospy.Subscriber("sawyer_to_lidar",Emergency,self.robotMecanumMoveJudge)
         #public
         #ローカル座標
         self.local = Pose()
         self.world = Pose()
         self.dataCount = 0
-        self.laser_angle_min = self.laser_angle_max = 0
+        self.laser_angle_min = 0
+        self.laser_angle_max = 0
         self.tracking_command = "false"
 
     '''
@@ -271,8 +279,9 @@ class Robot():
         lidar_gray_image = np.zeros((500,500),np.uint8)
 
         #中央の走査線番号
-        center = dataCount/6
+        center = dataCount/6*4
         #kTrackingAngle(前方90度)の走査線数
+        #270
         search_lines = int(1080*(kTrackingAngle/270.0))
 
         local = Pose()
@@ -280,7 +289,7 @@ class Robot():
 
         for j in range(int(center - search_lines/2),int(center + search_lines/2)+1):
             #捜査線の角度
-            angle = (laser_angle_max-laser_angle_min)*j/float(dataCount)+laser_angle_min+1.5708
+            angle = (laser_angle_max-laser_angle_min)*j/float(dataCount)+laser_angle_min-1.5708
             #画像座標系に変換
             tmp = int(kMToPixel * self.laser_distance[j] * math.cos(angle))
             #rosは進行方向がx,横がy
@@ -328,12 +337,14 @@ class Robot():
 
     '''
     LiDARデータを受け取るコールバック関数
-    data:トピック/scanをサブスクライブしている
+    data:トピック/lidar2/scan2をサブスクライブしている
     LiDARの捜査線数や距離、反射強度の値を変数に代入。LiDARデータをchangeToPictureに渡す
     '''
 
     def laserCallback(self,data):
-        if self.step < 0 or self.step > 7 and self.step < 35:
+        #self.step = -1
+        if self.step < 0 or self.step >= 1 and self.step < 80:
+            self.comeback_count = 0
             self.a = 0
             #捜査線数
             self.dataCount = np.size(data.ranges)
@@ -651,7 +662,8 @@ class Robot():
             #脚候補の中心が検出範囲尾の中にあるか
             human_pos_judge = ((math.fabs(tmp_ave_x - human_obj.image_expect_human_x) < g_find_leg_radius) and (math.fabs(tmp_ave_y - human_obj.image_expect_human_y) < g_find_leg_radius))
 
-            #片足間の重心の距離
+            #片足間の重心の距離886                             self.comeback_count = 0
+
             d = math.sqrt((leg1_point.x - leg2_point.x)**2 + (leg1_point.y - leg2_point.y)**2) /float(kMToPixel)
 
             #脚の位置からの矩形を描写
@@ -663,8 +675,8 @@ class Robot():
                 human_obj.distance = (math.sqrt(leg1_distance) + math.sqrt(leg2_distance))/(2*kMToPixel)
                 human_obj.angle = (math.atan2(leg1_point.x - kImageWidth/2,kImageHeight/2 - leg1_point.y) + (math.atan2(leg2_point.x - kImageWidth/2,kImageHeight/2 - leg2_point.y)))/2.0
 
-                self.human_approach_distance_cos = human_obj.distance*math.cos(0.785398 + human_obj.angle)
                 self.human_approach_distance_sin = human_obj.distance*math.sin(0.785398 + human_obj.angle)
+                self.human_approach_distance_cos = human_obj.distance*math.cos(0.785398 + human_obj.angle)
                 
                 #現在の脚の中心座標
                 ave_x =(leg1_point.x + leg2_point.x)/2.0
@@ -799,36 +811,139 @@ class Robot():
         #グローバル宣言
         global lidar_image
 
-        cv2.namedWindow("Map1",cv2.WINDOW_AUTOSIZE)
+        cv2.namedWindow("Map2",cv2.WINDOW_AUTOSIZE)
         dst_img = ~(lidar_image)
 
         #画像表示
-        cv2.imshow("Map1",dst_img)
+        cv2.imshow("Map2",dst_img)
 
     '''
     sawyer_emergency_controllに人の位置情報を送る関数
     '''
         
     def humanDetector(self):
-        self.step = -1
-        if self.step < 0 or self.step > 7 and self.step < 35:
-            Human_detector = rospy.Publisher('human_detector_1', Emergency, queue_size=1)
-            emergency = Emergency()
-            emergency.header.stamp = rospy.Time.now()
-            emergency.humanlost = self.human_lost
-            emergency.humandetectorcos = self.human_approach_distance_cos
-            emergency.humandetectorsin = self.human_approach_distance_sin
-            Human_detector.publish(emergency)
+        Human_detector = rospy.Publisher('human_detector_command', Emergency, queue_size=1)
+        emergency = Emergency()
+        if self.step < 0 or self.step >= 1 and self.step < 80:
+            if self.detector_count > 20:
+                if 0 < self.approach_count < 5:
+                    if self.human_lost == False and self.human_approach_distance_sin <= 1.1 and self.human_approach_distance_cos <= 1.85:
+                        emergency.approach = True
+                        emergency.sawyerstop = True
+                        print("Human approaching. I need stop")
+                        self.approach_count += 1
+                        Human_detector.publish(emergency)
+                    else:
+                        emergency.approach = False
+                        emergency.sawyerstop = False
+                        emergency.restart = True
+                        print("Human no approach. I restart work")
+                        self.approach_count = 0
+                        Human_detector.publish(emergency)
+                elif self.approach_count == 5:
+                    if self.human_lost == False and self.human_approach_distance_sin <= 1.1 and self.human_approach_distance_cos <= 1.85:
+                        emergency.approach = False
+                        emergency.evacuation = True
+                        emergency.sawyerstop = True
+                        print("Human approaching. I need evacuation")
+                        self.approach_count += 1
+                        Human_detector.publish(emergency)
+                        self.restart == True
+                    else:
+                        emergency.approach = False
+                        emergency.sawyerstop = False
+                        emergency.restart = True
+                        print("Human no approach. I restart work") 
+                        self.approach_count = 0
+                        Human_detector.publish(emergency)
+                elif 5 < self.approach_count:
+                    if self.sleep_time > 5:
+                        if self.human_lost == False and self.human_approach_distance_sin <= 1.1 and self.human_approach_distance_cos <= 1.85:
+                            emergency.evacuation = True
+                            emergency.sawyerstop = True
+                            print("Human approaching. I need evacuation")
+                            self.approach_count += 1
+                            Human_detector.publish(emergency)
+                        else:
+                            emergency.evacuation = False
+                            emergency.sawyerstop = False
+                            emergency.comeback = True
+                            print("Human no approach. I comeback work")
+                            self.approach_count = 0
+                            Human_detector.publish(emergency)
+                            self.comeback = True
+                            self.sleep_time = 0
+                    else:
+                        self.sleep_time += 1
+                else:
+                    if self.human_lost == False and self.human_approach_distance_sin <= 1.1 and self.human_approach_distance_cos <= 1.85:
+                        emergency.approach = True
+                        print("Human approach")
+                        self.approach_count += 1
+                        Human_detector.publish(emergency)
+                    elif self.restart == True:
+                        if self.restart_count > 4:
+                            self.restart = False
+                            self.restart_count = 0
+                            self.comeback = False
+                            self.comeback_count = 0
+                            emergency.approach = False
+                            emergency.sawyerstop = False
+                            emergency.restart = False
+                            emergency.comeback = False
+                            print("Human no approach")
+                            self.approach_count = 0
+                            Human_detector.publish(emergency)
+                        else:
+                            emergency.approach = False
+                            emergency.sawyerstop = False
+                            emergency.restart = True
+                            emergency.comeback = False
+                            print("Human no approach. I restart work") 
+                            Human_detector.publish(emergency)
+                            self.restart_count += 1
+                    elif self.comeback == True:
+                        if self.comeback_count > 4:
+                            self.restart = False
+                            self.restart_count = 0
+                            self.comeback = False
+                            self.comeback_count = 0
+                            emergency.approach = False
+                            emergency.sawyerstop = False
+                            emergency.restart = False
+                            emergency.comeback = False
+                            print("Human no approach")
+                            self.approach_count = 0
+                            Human_detector.publish(emergency)
+                        else:
+                            emergency.approach = False
+                            emergency.sawyerstop = False
+                            emergency.restart = False
+                            emergency.comeback = True
+                            print("Human no approach. I comeback work")
+                            Human_detector.publish(emergency)
+                            self.comeback_count += 1
+                    else:
+                        emergency.approach = False
+                        emergency.sawyerstop = False
+                        emergency.restart = False
+                        emergency.comeback = False
+                        print("Human no approach")
+                        self.approach_count = 0
+                        Human_detector.publish(emergency)
+                self.detector_count = 0
+            else:
+                self.detector_count += 1
 
     def robotMecanumMoveJudge(self,msg):
-        #self.step = msg.mecanum
-        self.step = 1
-        print("step")
+        self.step = msg.mecanum
 
 if __name__ == "__main__":
     #ROSの初期化
-    rospy.init_node("sawyer_human_detector_1")
+    rospy.init_node("sawyer_human_detector_2")
+
     robot = Robot()
+
     #パラメータ表示
     robot.welcomeMessage()
 
@@ -840,6 +955,7 @@ if __name__ == "__main__":
     loop = 0
 
     time_counter = time.time()
+
     while not rospy.is_shutdown():
         robot.laser_cycle()
         if loop < 10:
@@ -848,6 +964,7 @@ if __name__ == "__main__":
             loop+=1
             rospy.loginfo("time = %f",time.time() - time_counter)
             continue
+        
         robot.trackingHuman(lidar_erode_image)
         robot.humanDetector()
         robot.showWindow()

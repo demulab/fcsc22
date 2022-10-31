@@ -33,6 +33,8 @@ class Manipulation(object):
         self.target_pose = geometry_msgs.msg.Pose()
         self.ar_pose = geometry_msgs.msg.Pose()
         rospy.Subscriber("/ar_pose", Pose, self.target_pose_callback)
+        #added wrs2022
+        self.group.set_planning_time(7)
 
     def plan(self):
         print("***generate_plan***") 
@@ -152,6 +154,7 @@ class xArm6(Manipulation):
             rpy = tf.transformations.euler_from_quaternion((goal.target_pose.orientation.x, goal.target_pose.orientation.y, goal.target_pose.orientation.z, goal.target_pose.orientation.w))
             self.set_target_pose_euler(goal.target_pose.position.x, goal.target_pose.position.y + 0.05, goal.target_pose.position.z + 0.04, -1 * rpy[0], math.pi + rpy[1], rpy[2])
             plan = self.plan()
+            #print("plan", plan)
             if not plan.joint_trajectory.points:
                 feedback.plan = False
                 self._xarm_server.publish_feedback(feedback)
@@ -172,7 +175,7 @@ class xArm6(Manipulation):
 
 if __name__=='__main__':
     try:
-        rospy.init_node("xArm6_Moveit")
+        rospy.init_node("xArm6_Moveit", anonymous = True)
         xArm6()
         rospy.spin()
     except rospy.ROSInterruptException: 
