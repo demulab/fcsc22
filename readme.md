@@ -1,4 +1,11 @@
-## install
+# fcsc22 (Future Convenience Store Challege)
+## Overview
+This repository provides the competition software for the WRS2022 FCSC stocking and disposal task.
+It includes modules for perception, manipulation, and task planning to autonomously perform product stocking and disposal operations in a simulated convenience store setting.
+The code was developed and tested for participation in the WRS2022 event.
+
+
+## Install
 - smach
   - sudo apt install ros-melodic-smach-ros ros-melodic-smach-viewer 
 - Lidar
